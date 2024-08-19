@@ -34,10 +34,8 @@ class MainActivity : ComponentActivity() {
 //                        modifier = Modifier.padding(innerPadding)
 //                    )
                     SilenceButton(
-                        context = this,
                         modifier = Modifier.padding(innerPadding)
                     )
-
                 }
             }
         }
@@ -53,34 +51,34 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 }
 
 
-@Composable
-fun SilenceButton(context: Context, modifier: Modifier = Modifier) {
-    Button(
-        onClick = {
-            val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-            audioManager.ringerMode = AudioManager.RINGER_MODE_SILENT
-        },
-        modifier = modifier
-    ) {
-        Text(text = "Silence Phone")
-    }
-}
+//@Composable
+//fun SilenceButton(context: Context, modifier: Modifier = Modifier) {
+//    Button(
+//        onClick = {
+//            val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+//            audioManager.ringerMode = AudioManager.RINGER_MODE_SILENT
+//        },
+//        modifier = modifier
+//    ) {
+//        Text(text = "Silence Phone")
+//    }
+//}
 
-
 @Composable
-fun RequestDNDAccessButton(modifier: Modifier = Modifier) {
+fun SilenceButton(modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     Button(
         onClick = {
-            if (!notificationManager.isNotificationPolicyAccessGranted) {
-                val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
-                context.startActivity(intent)
-            } else {
-                // If permission is already granted, you can silence the phone here.
+            if (notificationManager.isNotificationPolicyAccessGranted) {
+                // Silence the phone if permission is already granted
                 val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
                 audioManager.ringerMode = AudioManager.RINGER_MODE_SILENT
+            } else {
+                // Request Do Not Disturb access if not granted
+                val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
+                context.startActivity(intent)
             }
         },
         modifier = modifier
@@ -88,7 +86,6 @@ fun RequestDNDAccessButton(modifier: Modifier = Modifier) {
         Text(text = "Silence Phone")
     }
 }
-
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
