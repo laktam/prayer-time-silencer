@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
             PrayerTimeSilencerTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting(
-                        name = "Android",
+                        name = "Silence",
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
