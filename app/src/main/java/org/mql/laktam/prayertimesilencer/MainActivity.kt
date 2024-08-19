@@ -13,6 +13,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import org.mql.laktam.prayertimesilencer.ui.theme.PrayerTimeSilencerTheme
 
+import android.content.Context
+import android.media.AudioManager
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import org.mql.laktam.prayertimesilencer.ui.theme.PrayerTimeSilencerTheme
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,10 +30,15 @@ class MainActivity : ComponentActivity() {
         setContent {
             PrayerTimeSilencerTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Silence",
+//                    Greeting(
+//                        name = "Silence",
+//                        modifier = Modifier.padding(innerPadding)
+//                    )
+                    SilenceButton(
+                        context = this,
                         modifier = Modifier.padding(innerPadding)
                     )
+
                 }
             }
         }
@@ -37,6 +52,21 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         modifier = modifier
     )
 }
+
+
+@Composable
+fun SilenceButton(context: Context, modifier: Modifier = Modifier) {
+    Button(
+        onClick = {
+            val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            audioManager.ringerMode = AudioManager.RINGER_MODE_SILENT
+        },
+        modifier = modifier
+    ) {
+        Text(text = "Silence Phone")
+    }
+}
+
 
 @Preview(showBackground = true)
 @Composable
