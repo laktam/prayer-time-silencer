@@ -117,7 +117,7 @@ fun SilenceButton(modifier: Modifier = Modifier, fusedLocationClient: FusedLocat
                         coroutineScope.launch {
                             try {
                                 val response = RetrofitInstance.api.getPrayerTimes(latitude, longitude)
-                                val fajrTime = response.data.timings.fajr
+                                val fajrTime = response.data.timings.Fajr
                                 println("Fajr time: $fajrTime")
                                 // Use the fetched prayer time
 //                                schedulePhoneSilence(context, fajrTime)
