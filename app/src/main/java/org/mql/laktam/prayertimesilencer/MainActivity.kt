@@ -120,6 +120,11 @@ fun SilenceButton(modifier: Modifier = Modifier, fusedLocationClient: FusedLocat
                                 val fajrTime = response.data.timings.Fajr
                                 println("Fajr time: $fajrTime")
                                 // Use the fetched prayer time
+//                                val fajrDate =  stringToDate(fajrTime);
+                                val fajrDate =  getPrayerTime("19:47");
+                                if(fajrDate != null){
+                                    schedulePhoneSilence(context, fajrDate)
+                                }
 //                                schedulePhoneSilence(context, fajrTime)
                             } catch (e: Exception) {
                                 e.printStackTrace()
@@ -190,50 +195,87 @@ fun SilenceButton(modifier: Modifier = Modifier, fusedLocationClient: FusedLocat
 }
 
 // Function to fetch prayer time from the API
-suspend fun fetchPrayerTime(latitude: Double, longitude: Double): Date? {
-    try {
-        val apiUrl = "https://api.aladhan.com/v1/timings?latitude=$latitude&longitude=$longitude"
-        val response = URL(apiUrl).readText()
+//suspend fun fetchPrayerTime(latitude: Double, longitude: Double): Date? {
+//    try {
+//        val apiUrl = "https://api.aladhan.com/v1/timings?latitude=$latitude&longitude=$longitude"
+//        val response = URL(apiUrl).readText()
+//
+//        // Parsing the prayer time from the response
+//        val prayerTimeString = parsePrayerTimeFromResponse(response)
+//
+//        return SimpleDateFormat("HH:mm", Locale.getDefault()).parse(prayerTimeString)
+//    } catch (e: Exception) {
+//        e.printStackTrace()
+//        return null
+//    }
+//}
 
-        // Parsing the prayer time from the response
-        val prayerTimeString = parsePrayerTimeFromResponse(response)
+fun getPrayerTime(timeString: String): Date? {
+    return try {
+        // Parse the time string "HH:mm"
+        val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+        val parsedTime = timeFormat.parse(timeString)
 
-        return SimpleDateFormat("HH:mm", Locale.getDefault()).parse(prayerTimeString)
+        // Combine the parsed time with the current date
+        val calendar = Calendar.getInstance()
+        val currentDate = calendar.time
+
+        if (parsedTime != null) {
+            calendar.time = parsedTime
+            val hours = calendar.get(Calendar.HOUR_OF_DAY)
+            val minutes = calendar.get(Calendar.MINUTE)
+
+            calendar.time = currentDate
+            calendar.set(Calendar.HOUR_OF_DAY, hours)
+            calendar.set(Calendar.MINUTE, minutes)
+            calendar.set(Calendar.SECOND, 0)
+            calendar.set(Calendar.MILLISECOND, 0)
+
+            return calendar.time
+        } else {
+            null
+        }
     } catch (e: Exception) {
         e.printStackTrace()
-        return null
+        null
     }
-}
-
-// Dummy function to parse the prayer time from the API response
-fun parsePrayerTimeFromResponse(response: String): String {
-    // You need to implement this method to parse the specific prayer time (e.g., Fajr, Dhuhr, etc.)
-    // from the API response.
-    return "05:00"  // Placeholder for actual parsing logic
 }
 // Function to schedule the phone to be silenced for 25 minutes
 fun schedulePhoneSilence(context: Context, prayerTime: Date) {
     val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-
-    // Calculate the start and end times for the silence period
-    val calendar = Calendar.getInstance()
-    calendar.time = prayerTime
-    val startSilence = calendar.time
-
-    calendar.add(Calendar.MINUTE, 25)
-    val endSilence = calendar.time
-
-    // Schedule the phone to be silenced at the start time
-    Timer().schedule(timerTask {
-        audioManager.ringerMode = AudioManager.RINGER_MODE_SILENT
-        println("Phone silenced at $startSilence")
-
-        // Schedule the phone to return to normal mode at the end time
+    val currentTime = Calendar.getInstance().time
+    println("prayer time $prayerTime.time")
+    val startDelay = prayerTime.time - currentTime.time
+    val endDelay = startDelay + 2 * 60 * 1000  // 2 minutes in milliseconds
+// Schedule the phone to be silenced at the start time
+    if (startDelay > 0) {
         Timer().schedule(timerTask {
-            audioManager.ringerMode = AudioManager.RINGER_MODE_NORMAL
-            println("Phone restored to normal mode at $endSilence")
-        }, endSilence)
-    }, startSilence)
+            audioManager.ringerMode = AudioManager.RINGER_MODE_SILENT
+            println("Phone silenced at $prayerTime")
+
+            // Schedule the phone to return to normal mode at the end time
+            Timer().schedule(timerTask {
+                audioManager.ringerMode = AudioManager.RINGER_MODE_NORMAL
+                println("Phone restored to normal mode 2 minutes after $prayerTime")
+            }, endDelay)
+        }, startDelay)
+    } else {
+        println("Scheduled prayer time has already passed.")
+    }
+//    calendar.add(Calendar.MINUTE, 2)
+//    val endSilence = calendar.time
+//
+//    // Schedule the phone to be silenced at the start time
+//    Timer().schedule(timerTask {
+//        audioManager.ringerMode = AudioManager.RINGER_MODE_SILENT
+//        println("Phone silenced at $startSilence")
+//
+//        // Schedule the phone to return to normal mode at the end time
+//        Timer().schedule(timerTask {
+//            audioManager.ringerMode = AudioManager.RINGER_MODE_NORMAL
+//            println("Phone restored to normal mode at $endSilence")
+//        }, endSilence)
+//    }, startSilence)
 }
 //@Preview(showBackground = true)
 //@Composable
