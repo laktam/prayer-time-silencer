@@ -8,8 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.media.AudioManager
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
@@ -42,9 +40,33 @@ class PrayerTimeService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         println("service started")
-        startForegroundService()  // Start the service as a foreground service
+        startForegroundService()
         getLocation()
+        scheduleDailyLocationCheck()
         return START_STICKY
+    }
+
+
+    private fun scheduleDailyLocationCheck() {
+        val calendar = Calendar.getInstance()
+        calendar.apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 1)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+
+            // If the time is already passed for today, schedule for tomorrow
+            if (before(Calendar.getInstance())) {
+                add(Calendar.DAY_OF_MONTH, 1)
+            }
+        }
+
+        val delay = calendar.timeInMillis - System.currentTimeMillis()
+        val dayInMillis = 24 * 60 * 60 * 1000L  // 24 hours in milliseconds
+
+        Timer().schedule(timerTask {
+            getLocation()
+        }, delay, dayInMillis)
     }
 
     // the permission is checked in ActivationButton before launching the service
@@ -90,19 +112,19 @@ class PrayerTimeService : Service() {
         // Clean up resources
     }
     private fun schedulePrayerTimeSilence(context: Context, prayerTimes: Timings) {
-//        val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 //        val fajrTime = parseTime(prayerTimes.Fajr)
 //        val dhuhrTime = parseTime(prayerTimes.Dhuhr)
 //        val asrTime = parseTime(prayerTimes.Asr)
-        val fajrTime = parseTime("16:55")
-//        val dhuhrTime = parseTime("15:52")
-//        val asrTime = parseTime("15:58")
+        val fajrTime = parseTime("23:42")
+        val dhuhrTime = parseTime("23:50")
+        val asrTime = parseTime("23:56")
+
         val maghribTime = parseTime(prayerTimes.Maghrib)
         val ishaTime = parseTime(prayerTimes.Isha)
 
         schedulePhoneSilence(context, fajrTime)
-//        schedulePhoneSilence(context, dhuhrTime)
-//        schedulePhoneSilence(context, asrTime)
+        schedulePhoneSilence(context, dhuhrTime)
+        schedulePhoneSilence(context, asrTime)
         schedulePhoneSilence(context, maghribTime)
         schedulePhoneSilence(context, ishaTime)
     }
@@ -111,10 +133,12 @@ class PrayerTimeService : Service() {
         val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val currentTime = Calendar.getInstance().time
         val startDelay = prayerTime.time - currentTime.time
-        val endDelay = startDelay + 2 * 60 * 1000  // 2 minutes in milliseconds
+//        println("Start Delay $startDelay")
+//        val endDelay = startDelay + 2 * 60 * 1000  // 2 minutes in milliseconds
+        val endDelay = 2 * 60 * 1000L  // 2 minutes in milliseconds
 
+//        println("Start Delay $endDelay")
         if (startDelay > 0) {
-            // increment delay number
             Timer().schedule(timerTask {
                 audioManager.ringerMode = AudioManager.RINGER_MODE_SILENT
                 println("Phone silenced at $prayerTime")
@@ -122,10 +146,6 @@ class PrayerTimeService : Service() {
                 Timer().schedule(timerTask {
                     audioManager.ringerMode = AudioManager.RINGER_MODE_NORMAL
                     println("Phone restored to normal mode 2 minutes after $prayerTime")
-                    // here after deselencing
-                    // decrement delay number
-                    // test delays number if it is 0
-                    // add delays for the next prayers
                 }, endDelay)
             }, startDelay)
         } else {
@@ -133,10 +153,7 @@ class PrayerTimeService : Service() {
         }
     }
 
-//    private fun parseTime(timeString: String): Date {
-//        val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
-//        return formatter.parse(timeString)!!
-//    }
+
     private fun parseTime(timeString: String): Date {
     return try {
         // Parse the time string "HH:mm"
