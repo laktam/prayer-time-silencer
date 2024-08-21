@@ -8,6 +8,8 @@ import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.media.AudioManager
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
@@ -29,25 +31,11 @@ class PrayerTimeService : Service() {
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
     private val CHANNEL_ID = "PrayerTimeServiceChannel"
     private val NOTIFICATION_ID = 1
+    private val networkMonitor by lazy { NetworkMonitor(this) }
+
     override fun onCreate() {
         super.onCreate()
         // Initialize service
-//            val CHANNEL_ID = "my_channel_01"
-//            val channel = NotificationChannel(
-//                CHANNEL_ID,
-//                "Channel human readable title",
-//                NotificationManager.IMPORTANCE_DEFAULT
-//            )
-//
-//            (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(
-//                channel
-//            )
-//
-//            val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-//                .setContentTitle("")
-//                .setContentText("").build()
-//
-//            startForeground(1, notification)
         createNotificationChannel()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
     }
@@ -69,20 +57,30 @@ class PrayerTimeService : Service() {
         }
     }
     private fun fetchPrayerTimes(latitude: Double, longitude: Double) {
-        val prayerTimeApi = RetrofitInstance.api
-
-        coroutineScope.launch {
-            try {
-                val prayerTimesResponse = prayerTimeApi.getPrayerTimes(latitude, longitude)
-                val prayerTimes = prayerTimesResponse.data.timings
-                println("prayer times $prayerTimes")
-                schedulePrayerTimeSilence(this@PrayerTimeService, prayerTimes)
-            } catch (e: Exception) {
-                // Handle the error
+        if (networkMonitor.isInternetAvailable()) {
+            val prayerTimeApi = RetrofitInstance.api
+            coroutineScope.launch {
+                try {
+                    val prayerTimesResponse = prayerTimeApi.getPrayerTimes(latitude, longitude)
+                    val prayerTimes = prayerTimesResponse.data.timings
+                    schedulePrayerTimeSilence(this@PrayerTimeService, prayerTimes)
+                } catch (e: Exception) {
+                    println("Error fetching prayer times: ${e.message}")
+                    retryFetchPrayerTimes(latitude, longitude)
+                }
             }
+        } else {
+            println("No internet connection. Will retry once connection is restored.")
+            // Start monitoring for network changes and retry fetching prayer times when the internet is back
+            retryFetchPrayerTimes(latitude, longitude)
         }
     }
-
+    private fun retryFetchPrayerTimes(latitude: Double, longitude: Double) {
+        networkMonitor.startMonitoring {
+            // Retry fetching prayer times when internet is back
+            fetchPrayerTimes(latitude, longitude)
+        }
+    }
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
@@ -96,7 +94,7 @@ class PrayerTimeService : Service() {
 //        val fajrTime = parseTime(prayerTimes.Fajr)
 //        val dhuhrTime = parseTime(prayerTimes.Dhuhr)
 //        val asrTime = parseTime(prayerTimes.Asr)
-        val fajrTime = parseTime("16:07")
+        val fajrTime = parseTime("16:55")
 //        val dhuhrTime = parseTime("15:52")
 //        val asrTime = parseTime("15:58")
         val maghribTime = parseTime(prayerTimes.Maghrib)
@@ -193,6 +191,7 @@ private fun startForegroundService() {
 
     startForeground(NOTIFICATION_ID, notification)
 }
+
 //    fun schedulePhoneSilence(context: Context, prayerTime: Date) {
 //        val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 //        val currentTime = Calendar.getInstance().time
