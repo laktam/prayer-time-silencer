@@ -1,4 +1,5 @@
 package org.mql.laktam.prayertimesilencer
 
-class ServiceManager {
+object ServiceManager {
+    var isServiceRunning: Boolean = false
 }
