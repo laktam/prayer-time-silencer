@@ -35,6 +35,7 @@
             android:name=".PrayerTimeService"
             android:exported="false"
             android:foregroundServiceType="location"/>
+        <receiver android:name=".PrayerTimeReceiver" />
     </application>
 
 </manifest>
