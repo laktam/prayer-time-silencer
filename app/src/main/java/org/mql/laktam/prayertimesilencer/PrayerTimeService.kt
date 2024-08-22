@@ -1,8 +1,10 @@
 package org.mql.laktam.prayertimesilencer
 
 import android.annotation.SuppressLint
+import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
@@ -36,17 +38,42 @@ class PrayerTimeService : Service() {
         // Initialize service
         createNotificationChannel()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        ServiceManager.isServiceRunning = true
+
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         println("service started")
         startForegroundService()
         getLocation()
-        scheduleDailyLocationCheck()
+        scheduleDailyPrayerTimes()
+//        scheduleDailyLocationCheck()
         return START_STICKY
     }
 
+    private fun scheduleDailyPrayerTimes() {
+        // Cancel any existing alarm
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(this, PrayerTimeReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
+        // Schedule the alarm to trigger at midnight every day
+        val calendar = Calendar.getInstance()
+        calendar.apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 1)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+            add(Calendar.DAY_OF_MONTH, 1)  // Trigger tomorrow at midnight
+        }
+
+        alarmManager.setInexactRepeating(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            AlarmManager.INTERVAL_DAY,
+            pendingIntent
+        )
+    }
     private fun scheduleDailyLocationCheck() {
         val calendar = Calendar.getInstance()
         calendar.apply {
@@ -109,7 +136,7 @@ class PrayerTimeService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        // Clean up resources
+        ServiceManager.isServiceRunning = false
     }
     private fun schedulePrayerTimeSilence(context: Context, prayerTimes: Timings) {
 //        val fajrTime = parseTime(prayerTimes.Fajr)
