@@ -39,7 +39,7 @@ class PrayerTimeService : Service() {
         createNotificationChannel()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         ServiceManager.isServiceRunning = true
-
+        println("service created")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -112,6 +112,7 @@ class PrayerTimeService : Service() {
                 try {
                     val prayerTimesResponse = prayerTimeApi.getPrayerTimes(latitude, longitude)
                     val prayerTimes = prayerTimesResponse.data.timings
+                    println(" fetched prayer times $prayerTimes")
                     schedulePrayerTimeSilence(this@PrayerTimeService, prayerTimes)
                 } catch (e: Exception) {
                     println("Error fetching prayer times: ${e.message}")
@@ -144,7 +145,8 @@ class PrayerTimeService : Service() {
         val asrTime = parseTime(prayerTimes.Asr)
         val maghribTime = parseTime(prayerTimes.Maghrib)
         val ishaTime = parseTime(prayerTimes.Isha)
-        val testTime = parseTime("1:33")
+        val testTime = parseTime("22:44")
+        val testTime2 = parseTime("22:50")
 
 
         schedulePhoneSilence(context, fajrTime)
@@ -153,30 +155,66 @@ class PrayerTimeService : Service() {
         schedulePhoneSilence(context, maghribTime)
         schedulePhoneSilence(context, ishaTime)
         schedulePhoneSilence(context, testTime)
+        schedulePhoneSilence(context, testTime2)
+
     }
 
     private fun schedulePhoneSilence(context: Context, prayerTime: Date) {
         val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        val currentTime = Calendar.getInstance().time
-        val startDelay = prayerTime.time - currentTime.time
-//        println("Start Delay $startDelay")
-//        val endDelay = startDelay + 2 * 60 * 1000  // 2 minutes in milliseconds
-        val endDelay = 2 * 60 * 1000L  // 2 minutes in milliseconds
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, PhoneSilenceReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-//        println("Start Delay $endDelay")
+        val startDelay = prayerTime.time - System.currentTimeMillis()
+        println("start delay : $startDelay")
+        val endDelay = 8 * 60 * 1000L  // 8 minutes in milliseconds
+
         if (startDelay > 0) {
-            Timer().schedule(timerTask {
-                audioManager.ringerMode = AudioManager.RINGER_MODE_SILENT
-                println("Phone silenced at $prayerTime")
+            try {
+                // Check if the API level is 31 or higher
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    if (alarmManager.canScheduleExactAlarms()) {
+                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, prayerTime.time, pendingIntent)
+                        println("Exact alarm scheduled at $prayerTime")
+                    } else {
+                        throw SecurityException("Cannot schedule exact alarms.")
+                    }
+                } else {
+                    // Assume the alarm can be scheduled for API levels below 31
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, prayerTime.time, pendingIntent)
+                    println("Exact alarm scheduled at $prayerTime")
+                }
+            } catch (e: Exception) {
+                println("Exact alarm failed: ${e.message}. Using Timer instead.")
 
+                // Fallback to Timer
                 Timer().schedule(timerTask {
-                    audioManager.ringerMode = AudioManager.RINGER_MODE_NORMAL
-                    println("Phone restored to normal mode 2 minutes after $prayerTime")
-                }, endDelay)
-            }, startDelay)
+                    audioManager.ringerMode = AudioManager.RINGER_MODE_SILENT
+                    println("Phone silenced at $prayerTime using Timer")
+
+                    Timer().schedule(timerTask {
+                        audioManager.ringerMode = AudioManager.RINGER_MODE_NORMAL
+                        println("Phone restored to normal mode 8 minutes after $prayerTime using Timer")
+                    }, endDelay)
+                }, startDelay)
+            }
         } else {
             println("Scheduled prayer time has already passed.")
         }
+
+//        if (startDelay > 0) {
+//            Timer().schedule(timerTask {
+//                audioManager.ringerMode = AudioManager.RINGER_MODE_SILENT
+//                println("Phone silenced at $prayerTime")
+//
+//                Timer().schedule(timerTask {
+//                    audioManager.ringerMode = AudioManager.RINGER_MODE_NORMAL
+//                    println("Phone restored to normal mode 8 minutes after $prayerTime")
+//                }, endDelay)
+//            }, startDelay)
+//        } else {
+//            println("Scheduled prayer time has already passed.")
+//        }
     }
 
 
@@ -235,27 +273,5 @@ private fun startForegroundService() {
     startForeground(NOTIFICATION_ID, notification)
 }
 
-//    fun schedulePhoneSilence(context: Context, prayerTime: Date) {
-//        val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-//        val currentTime = Calendar.getInstance().time
-//        println("prayer time $prayerTime.time")
-//        val startDelay = prayerTime.time - currentTime.time
-//        val endDelay = startDelay + 2 * 60 * 1000  // 2 minutes in milliseconds
-//// Schedule the phone to be silenced at the start time
-//        if (startDelay > 0) {
-//            Timer().schedule(timerTask {
-//                audioManager.ringerMode = AudioManager.RINGER_MODE_SILENT
-//                println("Phone silenced at $prayerTime")
-//
-//                // Schedule the phone to return to normal mode at the end time
-//                Timer().schedule(timerTask {
-//                    audioManager.ringerMode = AudioManager.RINGER_MODE_NORMAL
-//                    println("Phone restored to normal mode 2 minutes after $prayerTime")
-//                }, endDelay)
-//            }, startDelay)
-//        } else {
-//            println("Scheduled prayer time has already passed.")
-//        }
-//    }
 
 }
