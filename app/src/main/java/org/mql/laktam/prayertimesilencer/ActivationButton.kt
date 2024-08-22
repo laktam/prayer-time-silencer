@@ -62,7 +62,7 @@ fun ActivationButton(modifier: Modifier = Modifier) {
     }
 
 //    var isServiceRunning by remember { mutableStateOf(false) }
-    var isServiceRunning = ServiceManager.isServiceRunning
+    var isServiceRunning by remember { mutableStateOf(ServiceManager.isServiceRunning) }
 
     val handleButtonClick = {
         if (isServiceRunning) {

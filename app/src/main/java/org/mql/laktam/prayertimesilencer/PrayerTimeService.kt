@@ -139,21 +139,20 @@ class PrayerTimeService : Service() {
         ServiceManager.isServiceRunning = false
     }
     private fun schedulePrayerTimeSilence(context: Context, prayerTimes: Timings) {
-//        val fajrTime = parseTime(prayerTimes.Fajr)
-//        val dhuhrTime = parseTime(prayerTimes.Dhuhr)
-//        val asrTime = parseTime(prayerTimes.Asr)
-        val fajrTime = parseTime("23:42")
-        val dhuhrTime = parseTime("23:50")
-        val asrTime = parseTime("23:56")
-
+        val fajrTime = parseTime(prayerTimes.Fajr)
+        val dhuhrTime = parseTime(prayerTimes.Dhuhr)
+        val asrTime = parseTime(prayerTimes.Asr)
         val maghribTime = parseTime(prayerTimes.Maghrib)
         val ishaTime = parseTime(prayerTimes.Isha)
+        val testTime = parseTime("1:33")
+
 
         schedulePhoneSilence(context, fajrTime)
         schedulePhoneSilence(context, dhuhrTime)
         schedulePhoneSilence(context, asrTime)
         schedulePhoneSilence(context, maghribTime)
         schedulePhoneSilence(context, ishaTime)
+        schedulePhoneSilence(context, testTime)
     }
 
     private fun schedulePhoneSilence(context: Context, prayerTime: Date) {
