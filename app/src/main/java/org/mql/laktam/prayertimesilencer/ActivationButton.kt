@@ -2,6 +2,7 @@ package org.mql.laktam.prayertimesilencer
 
 import android.Manifest
 import android.app.Activity
+import android.app.ActivityManager
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
@@ -60,7 +61,8 @@ fun ActivationButton(modifier: Modifier = Modifier) {
         }
     }
 
-    var isServiceRunning by remember { mutableStateOf(false) }
+//    var isServiceRunning by remember { mutableStateOf(false) }
+    var isServiceRunning = ServiceManager.isServiceRunning
 
     val handleButtonClick = {
         if (isServiceRunning) {
@@ -92,3 +94,4 @@ fun stopService(context: Context) {
     context.stopService(serviceIntent)
 
 }
+
