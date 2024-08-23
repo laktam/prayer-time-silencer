@@ -40,8 +40,10 @@
             android:foregroundServiceType="location"/>
         <receiver android:name=".PrayerTimeReceiver" />
         <receiver android:name=".PhoneSilenceReceiver" />
-        <receiver android:name=".BootReceiver"
-            android:exported="false">
+        <receiver
+            android:name=".BootReceiver"
+            android:enabled="true"
+            android:exported="true"> <!-- Set to true to receive system broadcasts -->
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
