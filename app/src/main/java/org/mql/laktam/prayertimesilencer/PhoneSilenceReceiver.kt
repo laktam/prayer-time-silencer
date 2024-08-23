@@ -15,7 +15,7 @@ A component that responds to broadcast messages from other applications or from 
  */
 class PhoneSilenceReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
-        Toast.makeText(context, "Alarm received, silencing phone", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(context, "Alarm received, silencing phone", Toast.LENGTH_SHORT).show()
         val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         audioManager.ringerMode = AudioManager.RINGER_MODE_SILENT
 

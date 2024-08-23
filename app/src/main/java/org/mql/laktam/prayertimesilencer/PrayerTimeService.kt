@@ -145,8 +145,9 @@ class PrayerTimeService : Service() {
         val asrTime = parseTime(prayerTimes.Asr)
         val maghribTime = parseTime(prayerTimes.Maghrib)
         val ishaTime = parseTime(prayerTimes.Isha)
-        val testTime = parseTime("22:44")
-        val testTime2 = parseTime("22:50")
+        val testTime = parseTime("01:19")
+        val testTime2 = parseTime("01:22")
+        val testTime3 = parseTime("01:26")
 
 
         schedulePhoneSilence(context, fajrTime)
@@ -156,16 +157,20 @@ class PrayerTimeService : Service() {
         schedulePhoneSilence(context, ishaTime)
         schedulePhoneSilence(context, testTime)
         schedulePhoneSilence(context, testTime2)
-
+        schedulePhoneSilence(context, testTime3)
     }
 
     private fun schedulePhoneSilence(context: Context, prayerTime: Date) {
         val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        // Creates an Intent to trigger the PhoneSilenceReceiver broadcast receiver.
         val intent = Intent(context, PhoneSilenceReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         val startDelay = prayerTime.time - System.currentTimeMillis()
+        // to make request code unique
+//        Wraps the Intent in a PendingIntent, allowing it to be triggered later by the system.
+        val pendingIntent = PendingIntent.getBroadcast(context, startDelay.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
         println("start delay : $startDelay")
         val endDelay = 8 * 60 * 1000L  // 8 minutes in milliseconds
 
