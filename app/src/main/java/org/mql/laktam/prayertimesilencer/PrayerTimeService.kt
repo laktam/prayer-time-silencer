@@ -172,7 +172,7 @@ class PrayerTimeService : Service() {
         val pendingIntent = PendingIntent.getBroadcast(context, startDelay.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         println("start delay : $startDelay")
-        val endDelay = 8 * 60 * 1000L  // 8 minutes in milliseconds
+        val endDelay = ServiceManager.silenceTime  // 8 minutes in milliseconds
 
         if (startDelay > 0) {
             try {

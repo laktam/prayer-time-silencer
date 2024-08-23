@@ -25,6 +25,6 @@ class PhoneSilenceReceiver : BroadcastReceiver() {
         Timer().schedule(timerTask {
             audioManager.ringerMode = AudioManager.RINGER_MODE_NORMAL
             println("Phone restored to normal mode after 8 minutes by AlarmManager")
-        }, 1 * 60 * 1000L)
+        }, ServiceManager.silenceTime)
     }
 }
