@@ -34,6 +34,7 @@ class PrayerTimeService : Service() {
     private val networkMonitor by lazy { NetworkMonitor(this) }
     private var prayerTimers: MutableList<Timer> = mutableListOf() // List to store Timer objects
     private var pendingIntents: MutableList<PendingIntent> = mutableListOf() // List to store PendingIntents
+
     override fun onCreate() {
         super.onCreate()
         // Initialize service
@@ -48,6 +49,24 @@ class PrayerTimeService : Service() {
         getLocation()
         scheduleDailyPrayerTimes()
         return START_STICKY
+    }
+    override fun onBind(intent: Intent?): IBinder? {
+        return null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        ServiceManager.isServiceRunning = false
+        // Cancel all alarms
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        for (pendingIntent in pendingIntents) {
+            alarmManager.cancel(pendingIntent)
+        }
+        // Cancel all timers
+        for (timer in prayerTimers) {
+            timer.cancel()
+        }
+        println("All alarms and timers cancelled.")
     }
 
     private fun scheduleDailyPrayerTimes() {
@@ -109,44 +128,37 @@ class PrayerTimeService : Service() {
             fetchPrayerTimes(latitude, longitude)
         }
     }
-    override fun onBind(intent: Intent?): IBinder? {
-        return null
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        ServiceManager.isServiceRunning = false
-        // Cancel all alarms
-        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        for (pendingIntent in pendingIntents) {
-            alarmManager.cancel(pendingIntent)
-        }
-        // Cancel all timers
-        for (timer in prayerTimers) {
-            timer.cancel()
-        }
-        println("All alarms and timers cancelled.")
-    }
-
-
     private fun schedulePrayerTimeSilence(context: Context, prayerTimes: Timings) {
-        val fajrTime = parseTime(prayerTimes.Fajr)
-        val dhuhrTime = parseTime(prayerTimes.Dhuhr)
-        val asrTime = parseTime(prayerTimes.Asr)
-        val maghribTime = parseTime(prayerTimes.Maghrib)
-        val ishaTime = parseTime(prayerTimes.Isha)
-        val t = parseTime("00:05")
+        // Parse and save prayer times
+        val times = listOf(
+            parseTime(prayerTimes.Fajr),
+            parseTime(prayerTimes.Dhuhr),
+            parseTime(prayerTimes.Asr),
+            parseTime(prayerTimes.Maghrib),
+            parseTime(prayerTimes.Isha)
+        )
+        savePrayerTimes(times)
 
-        schedulePhoneSilence(context, fajrTime)
-        schedulePhoneSilence(context, dhuhrTime)
-        schedulePhoneSilence(context, asrTime)
-        schedulePhoneSilence(context, maghribTime)
-        schedulePhoneSilence(context, ishaTime)
-        schedulePhoneSilence(context, t)
-
-
+        // Schedule alarms
+        for (time in times) {
+            schedulePhoneSilence(context, time)
+        }
     }
-
+//    private fun schedulePrayerTimeSilence(context: Context, prayerTimes: Timings) {
+//        val fajrTime = parseTime(prayerTimes.Fajr)
+//        val dhuhrTime = parseTime(prayerTimes.Dhuhr)
+//        val asrTime = parseTime(prayerTimes.Asr)
+//        val maghribTime = parseTime(prayerTimes.Maghrib)
+//        val ishaTime = parseTime(prayerTimes.Isha)
+//        val t = parseTime("00:05")
+//
+//        schedulePhoneSilence(context, fajrTime)
+//        schedulePhoneSilence(context, dhuhrTime)
+//        schedulePhoneSilence(context, asrTime)
+//        schedulePhoneSilence(context, maghribTime)
+//        schedulePhoneSilence(context, ishaTime)
+//        schedulePhoneSilence(context, t)
+//    }
     private fun schedulePhoneSilence(context: Context, prayerTime: Date) {
         val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -201,8 +213,6 @@ class PrayerTimeService : Service() {
             println("Scheduled prayer time has already passed.")
         }
     }
-
-
     private fun parseTime(timeString: String): Date {
     return try {
         // Parse the time string "HH:mm"
@@ -257,6 +267,18 @@ private fun startForegroundService() {
 
     startForeground(NOTIFICATION_ID, notification)
 }
+    private fun savePrayerTimes(prayerTimes: List<Date>) {
+        val sharedPreferences = getSharedPreferences("PrayerTimesPreferences", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+
+        // Convert the list of Date objects to a set of strings
+        val timeStrings = prayerTimes.map { timeFormat.format(it) }.toSet()
+        editor.putStringSet("scheduledTimes", timeStrings)
+        editor.apply()
+
+        println("Prayer times saved: $timeStrings")
+    }
 
 
 }
