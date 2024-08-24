@@ -40,8 +40,16 @@ class MainActivity : ComponentActivity() {
         setContent {
             PrayerTimeSilencerTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    ActivationButton(modifier = Modifier.padding(innerPadding))
-                    DisplayPrayerTimes()
+                    // Use a Column to prevent overlap and add spacing
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding)
+                            .padding(16.dp) // additional padding to ensure content isn't too close to edges
+                    ) {
+                        ActivationButton(modifier = Modifier.padding(bottom = 16.dp))
+                        DisplayPrayerTimes()
+                    }
                 }
             }
         }
