@@ -40,7 +40,7 @@ class PrayerTimeService : Service() {
         // Initialize service
         createNotificationChannel()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        ServiceManager.isServiceRunning = true
+        ServiceManager.setServiceRunning(this@PrayerTimeService, true)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -56,7 +56,7 @@ class PrayerTimeService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        ServiceManager.isServiceRunning = false
+        ServiceManager.setServiceRunning(this@PrayerTimeService, false)
         // Cancel all alarms
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         for (pendingIntent in pendingIntents) {
