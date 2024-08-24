@@ -32,14 +32,14 @@ class PrayerTimeService : Service() {
     private val CHANNEL_ID = "PrayerTimeServiceChannel"
     private val NOTIFICATION_ID = 1
     private val networkMonitor by lazy { NetworkMonitor(this) }
-
+    private var prayerTimers: MutableList<Timer> = mutableListOf() // List to store Timer objects
+    private var pendingIntents: MutableList<PendingIntent> = mutableListOf() // List to store PendingIntents
     override fun onCreate() {
         super.onCreate()
         // Initialize service
         createNotificationChannel()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         ServiceManager.isServiceRunning = true
-        println("service created")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -47,7 +47,6 @@ class PrayerTimeService : Service() {
         startForegroundService()
         getLocation()
         scheduleDailyPrayerTimes()
-//        scheduleDailyLocationCheck()
         return START_STICKY
     }
 
@@ -56,7 +55,7 @@ class PrayerTimeService : Service() {
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(this, PrayerTimeReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-
+        pendingIntents.add(pendingIntent)
         // Schedule the alarm to trigger at midnight every day
         val calendar = Calendar.getInstance()
         calendar.apply {
@@ -73,27 +72,6 @@ class PrayerTimeService : Service() {
             AlarmManager.INTERVAL_DAY,
             pendingIntent
         )
-    }
-    private fun scheduleDailyLocationCheck() {
-        val calendar = Calendar.getInstance()
-        calendar.apply {
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 1)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-
-            // If the time is already passed for today, schedule for tomorrow
-            if (before(Calendar.getInstance())) {
-                add(Calendar.DAY_OF_MONTH, 1)
-            }
-        }
-
-        val delay = calendar.timeInMillis - System.currentTimeMillis()
-        val dayInMillis = 24 * 60 * 60 * 1000L  // 24 hours in milliseconds
-
-        Timer().schedule(timerTask {
-            getLocation()
-        }, delay, dayInMillis)
     }
 
     // the permission is checked in ActivationButton before launching the service
@@ -138,26 +116,35 @@ class PrayerTimeService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         ServiceManager.isServiceRunning = false
+        // Cancel all alarms
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        for (pendingIntent in pendingIntents) {
+            alarmManager.cancel(pendingIntent)
+        }
+        // Cancel all timers
+        for (timer in prayerTimers) {
+            timer.cancel()
+        }
+        println("All alarms and timers cancelled.")
     }
+
+
     private fun schedulePrayerTimeSilence(context: Context, prayerTimes: Timings) {
         val fajrTime = parseTime(prayerTimes.Fajr)
         val dhuhrTime = parseTime(prayerTimes.Dhuhr)
         val asrTime = parseTime(prayerTimes.Asr)
         val maghribTime = parseTime(prayerTimes.Maghrib)
         val ishaTime = parseTime(prayerTimes.Isha)
-        val testTime = parseTime("01:19")
-        val testTime2 = parseTime("01:22")
-        val testTime3 = parseTime("01:26")
-
+        val t = parseTime("00:05")
 
         schedulePhoneSilence(context, fajrTime)
         schedulePhoneSilence(context, dhuhrTime)
         schedulePhoneSilence(context, asrTime)
         schedulePhoneSilence(context, maghribTime)
         schedulePhoneSilence(context, ishaTime)
-        schedulePhoneSilence(context, testTime)
-        schedulePhoneSilence(context, testTime2)
-        schedulePhoneSilence(context, testTime3)
+        schedulePhoneSilence(context, t)
+
+
     }
 
     private fun schedulePhoneSilence(context: Context, prayerTime: Date) {
@@ -170,9 +157,10 @@ class PrayerTimeService : Service() {
         // to make request code unique
 //        Wraps the Intent in a PendingIntent, allowing it to be triggered later by the system.
         val pendingIntent = PendingIntent.getBroadcast(context, startDelay.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        pendingIntents.add(pendingIntent)
 
         println("start delay : $startDelay")
-        val endDelay = ServiceManager.silenceTime  // 8 minutes in milliseconds
+        val endDelay = ServiceManager.silenceTime
 
         if (startDelay > 0) {
             try {
@@ -193,33 +181,25 @@ class PrayerTimeService : Service() {
                 println("Exact alarm failed: ${e.message}. Using Timer instead.")
 
                 // Fallback to Timer
-                Timer().schedule(timerTask {
+                val silenceTimer = Timer()
+                silenceTimer.schedule(timerTask {
                     audioManager.ringerMode = AudioManager.RINGER_MODE_SILENT
                     println("Phone silenced at $prayerTime using Timer")
 
-                    Timer().schedule(timerTask {
+                    val restoreTimer = Timer()
+                    restoreTimer.schedule(timerTask {
                         audioManager.ringerMode = AudioManager.RINGER_MODE_NORMAL
-                        println("Phone restored to normal mode 8 minutes after $prayerTime using Timer")
+                        println("Phone restored to normal mode using Timer")
                     }, endDelay)
+
+                    prayerTimers.add(restoreTimer) // Store restore Timer
                 }, startDelay)
+
+                prayerTimers.add(silenceTimer) // Store silence Timer
             }
         } else {
             println("Scheduled prayer time has already passed.")
         }
-
-//        if (startDelay > 0) {
-//            Timer().schedule(timerTask {
-//                audioManager.ringerMode = AudioManager.RINGER_MODE_SILENT
-//                println("Phone silenced at $prayerTime")
-//
-//                Timer().schedule(timerTask {
-//                    audioManager.ringerMode = AudioManager.RINGER_MODE_NORMAL
-//                    println("Phone restored to normal mode 8 minutes after $prayerTime")
-//                }, endDelay)
-//            }, startDelay)
-//        } else {
-//            println("Scheduled prayer time has already passed.")
-//        }
     }
 
 
