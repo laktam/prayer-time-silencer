@@ -40,6 +40,8 @@
             android:foregroundServiceType="location"/>
         <receiver android:name=".PrayerTimeReceiver" />
         <receiver android:name=".PhoneSilenceReceiver" />
+        <receiver android:name=".RingerRestoreReceiver" />
+
         <receiver
             android:name=".BootReceiver"
             android:enabled="true"
