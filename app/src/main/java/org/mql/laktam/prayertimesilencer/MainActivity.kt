@@ -27,6 +27,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import org.mql.laktam.prayertimesilencer.ui.theme.PrayerTimeSilencerTheme
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 
@@ -48,7 +49,7 @@ class MainActivity : ComponentActivity() {
                             .padding(16.dp) // additional padding to ensure content isn't too close to edges
                     ) {
                         ActivationButton(modifier = Modifier.padding(bottom = 16.dp))
-                        DisplayPrayerTimes()
+                        DisplaySilenceTimes()
                     }
                 }
             }
@@ -57,43 +58,50 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun DisplayPrayerTimes() {
+fun DisplaySilenceTimes() {
     val context = LocalContext.current
-//    val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-    val prayerTimesState = remember { mutableStateOf<List<String>?>(null) }
+    val prayerTimesState = remember { mutableStateOf<List<Pair<String, String>>?>(null) } // List of pairs for start and end times
 
-    // Load prayer times when the composable is launched
+    // Load prayer times and calculate silence periods when the composable is launched
     LaunchedEffect(Unit) {
         val sharedPreferences = context.getSharedPreferences("PrayerTimesPreferences", Context.MODE_PRIVATE)
         val timeStrings = sharedPreferences.getStringSet("scheduledTimes", setOf()) ?: setOf()
 
         // Sort and store the prayer times in the state
-        val formattedTimes = timeStrings.toList().sorted()
-        prayerTimesState.value = formattedTimes
+        val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+        val silenceDuration = ServiceManager.silenceTime
+
+        val silenceTimes = timeStrings.map { timeString ->
+            val startTime = timeFormat.parse(timeString)
+            val endTime = Date(startTime.time + silenceDuration)
+
+            timeString to timeFormat.format(endTime)
+        }.sortedBy { it.first }
+
+        prayerTimesState.value = silenceTimes
 
         // Debug log
-        println("Loaded prayer times: $formattedTimes")
+        println("Loaded and calculated prayer times: $silenceTimes")
     }
-
     Column(modifier = Modifier.padding(16.dp)) {
-        val times = prayerTimesState.value
-        if (times == null) {
+        val silenceTimes = prayerTimesState.value
+        if (silenceTimes == null) {
             Text(
                 text = "Loading prayer times...",
                 style = MaterialTheme.typography.bodyMedium
             )
-        } else if (times.isNotEmpty()) {
+        } else if (silenceTimes.isNotEmpty()) {
             Text(
-                text = "Scheduled Prayer Times:",
+                text = "Scheduled Silence Times:",
                 style = MaterialTheme.typography.titleMedium
             )
             Spacer(modifier = Modifier.height(8.dp))
-            times.forEach { time ->
-                Text(text = time, style = MaterialTheme.typography.bodyMedium)
+            silenceTimes.forEach { (start, end) ->
+                Text(text = "from $start to $end", style = MaterialTheme.typography.bodyMedium)
             }
         } else {
             Text(
-                text = "No prayer times scheduled.",
+                text = "No Silence times scheduled.",
                 style = MaterialTheme.typography.bodyMedium
             )
         }

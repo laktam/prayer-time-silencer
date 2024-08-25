@@ -8,7 +8,7 @@ import android.content.Context
 object ServiceManager {
     private const val PREFS_NAME = "PrayerTimeServicePrefs"
     private const val KEY_SERVICE_RUNNING = "service_running"
-    var silenceTime = 30  * 60 * 1000L
+    var silenceTime = 1  * 60 * 1000L
 
     fun isServiceRunning(context: Context): Boolean {
         val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
