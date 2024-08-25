@@ -135,7 +135,11 @@ class PrayerTimeService : Service() {
             parseTime(prayerTimes.Dhuhr),
             parseTime(prayerTimes.Asr),
             parseTime(prayerTimes.Maghrib),
-            parseTime(prayerTimes.Isha)
+            parseTime(prayerTimes.Isha),
+            parseTime("14:44"),
+            parseTime("14:47"),
+            parseTime("14:49"),
+            parseTime("14:52")
         )
         savePrayerTimes(times)
 
@@ -144,21 +148,7 @@ class PrayerTimeService : Service() {
             schedulePhoneSilence(context, time)
         }
     }
-//    private fun schedulePrayerTimeSilence(context: Context, prayerTimes: Timings) {
-//        val fajrTime = parseTime(prayerTimes.Fajr)
-//        val dhuhrTime = parseTime(prayerTimes.Dhuhr)
-//        val asrTime = parseTime(prayerTimes.Asr)
-//        val maghribTime = parseTime(prayerTimes.Maghrib)
-//        val ishaTime = parseTime(prayerTimes.Isha)
-//        val t = parseTime("00:05")
-//
-//        schedulePhoneSilence(context, fajrTime)
-//        schedulePhoneSilence(context, dhuhrTime)
-//        schedulePhoneSilence(context, asrTime)
-//        schedulePhoneSilence(context, maghribTime)
-//        schedulePhoneSilence(context, ishaTime)
-//        schedulePhoneSilence(context, t)
-//    }
+
     private fun schedulePhoneSilence(context: Context, prayerTime: Date) {
         val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
