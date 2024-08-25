@@ -85,10 +85,15 @@ class PrayerTimeService : Service() {
             add(Calendar.DAY_OF_MONTH, 1)  // Trigger tomorrow at midnight
         }
 
-        alarmManager.setInexactRepeating(
+//        alarmManager.setInexactRepeating(
+//            AlarmManager.RTC_WAKEUP,
+//            calendar.timeInMillis,
+//            AlarmManager.INTERVAL_DAY,
+//            pendingIntent
+//        )
+        alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             calendar.timeInMillis,
-            AlarmManager.INTERVAL_DAY,
             pendingIntent
         )
     }
@@ -136,10 +141,10 @@ class PrayerTimeService : Service() {
             parseTime(prayerTimes.Asr),
             parseTime(prayerTimes.Maghrib),
             parseTime(prayerTimes.Isha),
-            parseTime("21:20"),
-            parseTime("21:23"),
-            parseTime("21:26"),
-            parseTime("21:30"),
+            parseTime("23:36"),
+            parseTime("23:39"),
+            parseTime("23:42"),
+            parseTime("23:45"),
         )
         savePrayerTimes(times)
 
@@ -152,16 +157,13 @@ class PrayerTimeService : Service() {
     private fun schedulePhoneSilence(context: Context, prayerTime: Date) {
         val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        // Creates an Intent to trigger the PhoneSilenceReceiver broadcast receiver.
         val intent = Intent(context, PhoneSilenceReceiver::class.java)
 
         val startDelay = prayerTime.time - System.currentTimeMillis()
-        // to make request code unique
-//        Wraps the Intent in a PendingIntent, allowing it to be triggered later by the system.
         val pendingIntent = PendingIntent.getBroadcast(context, startDelay.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
         pendingIntents.add(pendingIntent)
 
-        println("start delay : $startDelay")
+        println("Start delay: $startDelay")
         val endDelay = ServiceManager.silenceTime
 
         if (startDelay > 0) {
@@ -169,14 +171,20 @@ class PrayerTimeService : Service() {
                 // Check if the API level is 31 or higher
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     if (alarmManager.canScheduleExactAlarms()) {
-                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, prayerTime.time, pendingIntent)
-                        println("Exact alarm scheduled at $prayerTime")
+                    // Use setExactAndAllowWhileIdle to handle different power modes
+                    alarmManager.setExactAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        prayerTime.time,
+                        pendingIntent
+                    )
+                    println("Exact alarm scheduled at $prayerTime with setExactAndAllowWhileIdle")
+
                     } else {
                         throw SecurityException("Cannot schedule exact alarms.")
                     }
                 } else {
                     // Assume the alarm can be scheduled for API levels below 31
-                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, prayerTime.time, pendingIntent)
+                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, prayerTime.time, pendingIntent)
                     println("Exact alarm scheduled at $prayerTime")
                 }
             } catch (e: Exception) {
@@ -203,6 +211,62 @@ class PrayerTimeService : Service() {
             println("Scheduled prayer time has already passed.")
         }
     }
+
+    //    private fun schedulePhoneSilence(context: Context, prayerTime: Date) {
+//        val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+//        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+//        // Creates an Intent to trigger the PhoneSilenceReceiver broadcast receiver.
+//        val intent = Intent(context, PhoneSilenceReceiver::class.java)
+//
+//        val startDelay = prayerTime.time - System.currentTimeMillis()
+//        // to make request code unique
+////        Wraps the Intent in a PendingIntent, allowing it to be triggered later by the system.
+//        val pendingIntent = PendingIntent.getBroadcast(context, startDelay.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
+//        pendingIntents.add(pendingIntent)
+//
+//        println("start delay : $startDelay")
+//        val endDelay = ServiceManager.silenceTime
+//
+//        if (startDelay > 0) {
+//            try {
+//                // Check if the API level is 31 or higher
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+//                    if (alarmManager.canScheduleExactAlarms()) {
+//                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, prayerTime.time, pendingIntent)
+//                        println("Exact alarm scheduled at $prayerTime")
+//                    } else {
+//                        throw SecurityException("Cannot schedule exact alarms.")
+//                    }
+//                } else {
+//                    // Assume the alarm can be scheduled for API levels below 31
+//                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, prayerTime.time, pendingIntent)
+//                    println("Exact alarm scheduled at $prayerTime")
+//                }
+//            } catch (e: Exception) {
+//                println("Exact alarm failed: ${e.message}. Using Timer instead.")
+//
+//                // Fallback to Timer
+//                val silenceTimer = Timer()
+//                silenceTimer.schedule(timerTask {
+//                    audioManager.ringerMode = AudioManager.RINGER_MODE_SILENT
+//                    println("Phone silenced at $prayerTime using Timer")
+//
+//                    val restoreTimer = Timer()
+//                    restoreTimer.schedule(timerTask {
+//                        audioManager.ringerMode = AudioManager.RINGER_MODE_NORMAL
+//                        println("Phone restored to normal mode using Timer")
+//                    }, endDelay)
+//
+//                    prayerTimers.add(restoreTimer) // Store restore Timer
+//                }, startDelay)
+//
+//                prayerTimers.add(silenceTimer) // Store silence Timer
+//            }
+//        } else {
+//            println("Scheduled prayer time has already passed.")
+//        }
+//    }
+//
     private fun parseTime(timeString: String): Date {
     return try {
         // Parse the time string "HH:mm"
