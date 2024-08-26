@@ -141,10 +141,10 @@ class PrayerTimeService : Service() {
             parseTime(prayerTimes.Asr),
             parseTime(prayerTimes.Maghrib),
             parseTime(prayerTimes.Isha),
-            parseTime("23:36"),
-            parseTime("23:39"),
-            parseTime("23:42"),
-            parseTime("23:45"),
+            parseTime("22:43"),
+            parseTime("22:47"),
+            parseTime("22:50"),
+            parseTime("22:54"),
         )
         savePrayerTimes(times)
 
