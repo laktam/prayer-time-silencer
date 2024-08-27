@@ -332,6 +332,13 @@ private fun startForegroundService() {
         editor.apply()
 
         println("Prayer times saved: $timeStrings")
+
+        // Notify the ViewModel to reload prayer times
+        val intent = Intent("PRAYER_TIMES_UPDATED")
+        sendBroadcast(intent)
+        // Use LocalBroadcastManager to send the broadcast
+//        val intent = Intent("PRAYER_TIMES_UPDATED")
+//        LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
 
 
