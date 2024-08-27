@@ -2,11 +2,16 @@ package org.mql.laktam.prayertimesilencer
 
 
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,6 +22,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 
@@ -33,7 +40,14 @@ import java.util.Locale
 
 class MainActivity : ComponentActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-
+    private val viewModel: MainViewModel by viewModels()
+    private val prayerTimesUpdateReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == "PRAYER_TIMES_UPDATED") {
+                viewModel.loadPrayerTimes(this@MainActivity)
+            }
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -41,71 +55,74 @@ class MainActivity : ComponentActivity() {
         setContent {
             PrayerTimeSilencerTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    // Use a Column to prevent overlap and add spacing
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(innerPadding)
-                            .padding(16.dp) // additional padding to ensure content isn't too close to edges
+                            .padding(16.dp)
                     ) {
                         ActivationButton(modifier = Modifier.padding(bottom = 16.dp))
-                        DisplaySilenceTimes()
+                        DisplaySilenceTimes(viewModel)
                     }
                 }
             }
         }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//            registerReceiver(prayerTimesUpdateReceiver, IntentFilter("PRAYER_TIMES_UPDATED"),
+//                RECEIVER_NOT_EXPORTED)
+//        }else {
+            registerReceiver(prayerTimesUpdateReceiver, IntentFilter("PRAYER_TIMES_UPDATED"))
+//        }
+
+        // Register the receiver using LocalBroadcastManager
+//        LocalBroadcastManager.getInstance(this).registerReceiver(
+//            prayerTimesUpdateReceiver,
+//            IntentFilter("PRAYER_TIMES_UPDATED")
+//        )
+
+// Register the receiver with the appropriate flag
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//            registerReceiver(
+//                prayerTimesUpdateReceiver,
+//                IntentFilter("PRAYER_TIMES_UPDATED"),
+//                RECEIVER_NOT_EXPORTED
+//            )
+//        } else {
+//            registerReceiver(prayerTimesUpdateReceiver, IntentFilter("PRAYER_TIMES_UPDATED"))
+//        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(prayerTimesUpdateReceiver)
+//        LocalBroadcastManager.getInstance(this).unregisterReceiver(prayerTimesUpdateReceiver)
+
     }
 }
-
 @Composable
-fun DisplaySilenceTimes() {
+fun DisplaySilenceTimes(viewModel: MainViewModel) {
     val context = LocalContext.current
-    val prayerTimesState = remember { mutableStateOf<List<Pair<String, String>>?>(null) } // List of pairs for start and end times
+    val prayerTimes by viewModel.prayerTimes.collectAsState()
 
-    // Load prayer times and calculate silence periods when the composable is launched
     LaunchedEffect(Unit) {
-        val sharedPreferences = context.getSharedPreferences("PrayerTimesPreferences", Context.MODE_PRIVATE)
-        val timeStrings = sharedPreferences.getStringSet("scheduledTimes", setOf()) ?: setOf()
-
-        // Sort and store the prayer times in the state
-        val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-        val silenceDuration = ServiceManager.silenceTime
-
-        val silenceTimes = timeStrings.map { timeString ->
-            val startTime = timeFormat.parse(timeString)
-            val endTime = Date(startTime.time + silenceDuration)
-
-            timeString to timeFormat.format(endTime)
-        }.sortedBy { it.first }
-
-        prayerTimesState.value = silenceTimes
-
-        // Debug log
-        println("Loaded and calculated prayer times: $silenceTimes")
+        viewModel.loadPrayerTimes(context)
     }
+
     Column(modifier = Modifier.padding(16.dp)) {
-        val silenceTimes = prayerTimesState.value
-        if (silenceTimes == null) {
+        if (prayerTimes.isEmpty()) {
             Text(
                 text = "Loading prayer times...",
                 style = MaterialTheme.typography.bodyMedium
             )
-        } else if (silenceTimes.isNotEmpty()) {
+        } else {
             Text(
                 text = "Scheduled Silence Times:",
                 style = MaterialTheme.typography.titleMedium
             )
             Spacer(modifier = Modifier.height(8.dp))
-            silenceTimes.forEach { (start, end) ->
+            prayerTimes.forEach { (start, end) ->
                 Text(text = "from $start to $end", style = MaterialTheme.typography.bodyMedium)
             }
-        } else {
-            Text(
-                text = "No Silence times scheduled.",
-                style = MaterialTheme.typography.bodyMedium
-            )
         }
     }
-
 }
-
