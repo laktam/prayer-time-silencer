@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -37,7 +38,13 @@ fun DisplaySilenceTimes(viewModel: MainViewModel) {
     }
 
     Column(modifier = Modifier.fillMaxWidth()) {
-        if (prayerTimes.isEmpty()) {
+        if(!ServiceManager.isServiceRunning(context)){// here this use shared preferences
+            Text(
+                text = "Click start to fetch prayer times and automatically schedule phone silence",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+        }else if (prayerTimes.isEmpty()) {
             LoadingIndicator()
         } else {
             Text(
@@ -98,7 +105,7 @@ fun PrayerTimeCard(start: String, end: String) {
                 )
             }
             Icon(
-                imageVector = Icons.Default.Notifications,
+                imageVector = Icons.Default.Info,
                 contentDescription = "Silence Time",
                 tint = MaterialTheme.colorScheme.primary
             )

@@ -127,6 +127,9 @@ fun MainScreen(viewModel: MainViewModel) {
                     titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             )
+        },
+        floatingActionButton = {
+            ActivationFab()
         }
     ) { innerPadding ->
         Column(
@@ -135,7 +138,7 @@ fun MainScreen(viewModel: MainViewModel) {
                 .padding(innerPadding)
                 .padding(16.dp)
         ) {
-            ActivationButton(modifier = Modifier.padding(bottom = 16.dp))
+//            ActivationButton(modifier = Modifier.padding(bottom = 16.dp))
             DisplaySilenceTimes(viewModel)
         }
     }

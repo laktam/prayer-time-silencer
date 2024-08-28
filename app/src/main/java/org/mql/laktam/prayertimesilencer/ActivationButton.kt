@@ -7,9 +7,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.provider.Settings
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -18,75 +19,84 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+
 
 @Composable
-fun ActivationButton(modifier: Modifier = Modifier) {
-     val context = LocalContext.current
+fun ActivationFab() {
+    val context = LocalContext.current
 
-        // State variables for permissions and service status
-        var locationPermissionGranted by remember { mutableStateOf(false) }
-        var doNotDisturbPermissionGranted by remember { mutableStateOf(false) }
-//        var isServiceRunning by remember { mutableStateOf(false) }
+    // State variables for permissions and service status
+    var locationPermissionGranted by remember { mutableStateOf(false) }
+    var doNotDisturbPermissionGranted by remember { mutableStateOf(false) }
     var isServiceRunning by remember { mutableStateOf(ServiceManager.isServiceRunning(context)) }
 
-        // Permission checks and requests
-        LaunchedEffect(Unit) {
-            // Check for location permission
+    // Permission checks and requests
+    LaunchedEffect(Unit) {
+        // Check for location permission
+        if (!locationPermissionGranted) {
+            locationPermissionGranted = ActivityCompat.checkSelfPermission(
+                context, Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+
             if (!locationPermissionGranted) {
-                locationPermissionGranted = ActivityCompat.checkSelfPermission(
-                    context, Manifest.permission.ACCESS_FINE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED
-
-                if (!locationPermissionGranted) {
-                    ActivityCompat.requestPermissions(
-                        context as Activity,
-                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                        1
-                    )
-                }
+                ActivityCompat.requestPermissions(
+                    context as Activity,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    1
+                )
             }
+        }
 
-            // Check for Do Not Disturb permission
+        // Check for Do Not Disturb permission
+        if (!doNotDisturbPermissionGranted) {
+            val notificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            doNotDisturbPermissionGranted =
+                notificationManager.isNotificationPolicyAccessGranted
+
             if (!doNotDisturbPermissionGranted) {
-                val notificationManager =
-                    context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                doNotDisturbPermissionGranted =
-                    notificationManager.isNotificationPolicyAccessGranted
-
-                if (!doNotDisturbPermissionGranted) {
-                    val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
-                    context.startActivity(intent)
-                }
-            }
-
-            // Check if service should be running
-//            println("permissions $locationPermissionGranted ,$doNotDisturbPermissionGranted")
-//            println("service status $isServiceRunning")
-//            if (locationPermissionGranted && doNotDisturbPermissionGranted && !isServiceRunning) {
-//                startService(context)
-//                isServiceRunning = true
-//            }
-        }
-
-        val handleButtonClick = {
-            if (isServiceRunning) {
-                stopService(context)
-                isServiceRunning = false
-            } else {
-                startService(context)
-                isServiceRunning = true
+                val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
+                context.startActivity(intent)
             }
         }
+    }
 
-    Column {
-        Button(onClick = { handleButtonClick() }, modifier = modifier) {
-            Text(if (isServiceRunning) "Stop Service" else "Start Service")
+    val handleFabClick = {
+        if (isServiceRunning) {
+            stopService(context)
+            isServiceRunning = false
+        } else {
+            startService(context)
+            isServiceRunning = true
+        }
+    }
+
+    FloatingActionButton(onClick = { handleFabClick() }) {
+        Row(
+            modifier = Modifier.padding(horizontal = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = if (isServiceRunning) Icons.Filled.Close else Icons.Filled.PlayArrow,
+                contentDescription = if (isServiceRunning) "Stop" else "Start"
+            )
+            Text(
+                text = if (isServiceRunning) "Stop" else "Start",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(start = 8.dp)
+            )
         }
     }
 }
-
 
 fun startService(context: Context) {//, locationPermissionGranted: Boolean, doNotDisturbPermissionGranted : Boolean
 //    if (locationPermissionGranted && doNotDisturbPermissionGranted) {
