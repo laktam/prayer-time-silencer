@@ -129,7 +129,7 @@ fun MainScreen(viewModel: MainViewModel) {
             )
         },
         floatingActionButton = {
-            ActivationFab()
+            ActivationFab(viewModel)
         }
     ) { innerPadding ->
         Column(
