@@ -33,12 +33,15 @@ fun DisplaySilenceTimes(viewModel: MainViewModel) {
     val context = LocalContext.current
     val prayerTimes by viewModel.prayerTimes.collectAsState()
 
+    val isServiceRunning by viewModel.isServiceRunning.collectAsState()
+
     LaunchedEffect(Unit) {
+        viewModel.initializeServiceState(context)
         viewModel.loadPrayerTimes(context)
     }
 
     Column(modifier = Modifier.fillMaxWidth()) {
-        if(!ServiceManager.isServiceRunning(context)){// here this use shared preferences
+        if (!isServiceRunning) {
             Text(
                 text = "Click start to fetch prayer times and automatically schedule phone silence",
                 style = MaterialTheme.typography.titleMedium,
