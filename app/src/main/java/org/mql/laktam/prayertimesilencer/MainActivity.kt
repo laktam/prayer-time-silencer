@@ -67,12 +67,9 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-//            registerReceiver(prayerTimesUpdateReceiver, IntentFilter("PRAYER_TIMES_UPDATED"),
-//                RECEIVER_NOT_EXPORTED)
-//        }else {
-            registerReceiver(prayerTimesUpdateReceiver, IntentFilter("PRAYER_TIMES_UPDATED"))
-//        }
+
+        registerReceiver(prayerTimesUpdateReceiver, IntentFilter("PRAYER_TIMES_UPDATED"))
+
 
         // Register the receiver using LocalBroadcastManager
 //        LocalBroadcastManager.getInstance(this).registerReceiver(
