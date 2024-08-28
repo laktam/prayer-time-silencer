@@ -14,6 +14,7 @@ import java.util.Locale
 class MainViewModel : ViewModel() {
     private val _prayerTimes = MutableStateFlow<List<Pair<String, String>>>(emptyList())
     val prayerTimes: StateFlow<List<Pair<String, String>>> = _prayerTimes.asStateFlow()
+    val isServiceRunning: StateFlow<Boolean> = ServiceManager.isServiceRunning
 
     fun loadPrayerTimes(context: Context) {
         viewModelScope.launch {
@@ -32,5 +33,13 @@ class MainViewModel : ViewModel() {
 
             _prayerTimes.value = silenceTimes
         }
+    }
+
+    fun initializeServiceState(context: Context) {
+        ServiceManager.initializeServiceState(context)
+    }
+
+    fun setServiceRunning(context: Context, isRunning: Boolean) {
+        ServiceManager.setServiceRunning(context, isRunning)
     }
 }
