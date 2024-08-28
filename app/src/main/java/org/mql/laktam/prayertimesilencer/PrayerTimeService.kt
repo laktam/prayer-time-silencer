@@ -135,21 +135,20 @@ class PrayerTimeService : Service() {
     }
     private fun schedulePrayerTimeSilence(context: Context, prayerTimes: Timings) {
         // Parse and save prayer times
-        val times = listOf(
-            parseTime(prayerTimes.Fajr),
-            parseTime(prayerTimes.Dhuhr),
-            parseTime(prayerTimes.Asr),
-            parseTime(prayerTimes.Maghrib),
-            parseTime(prayerTimes.Isha),
+        val prayerTimesList = listOf(
+            "Fajr" to parseTime(prayerTimes.Fajr),
+            "Dhuhr" to parseTime(prayerTimes.Dhuhr),
+            "Asr" to parseTime(prayerTimes.Asr),
+            "Maghrib" to parseTime(prayerTimes.Maghrib),
+            "Isha" to parseTime(prayerTimes.Isha)
         )
-        savePrayerTimes(times)
+        savePrayerTimes(prayerTimesList)
 
         // Schedule alarms
-        for (time in times) {
+        for ((name, time) in prayerTimesList) {
             schedulePhoneSilence(context, time)
         }
     }
-
     private fun schedulePhoneSilence(context: Context, prayerTime: Date) {
         val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -262,13 +261,13 @@ private fun startForegroundService() {
 
     startForeground(NOTIFICATION_ID, notification)
 }
-    private fun savePrayerTimes(prayerTimes: List<Date>) {
+    private fun savePrayerTimes(prayerTimes: List<Pair<String, Date>>) {
         val sharedPreferences = getSharedPreferences("PrayerTimesPreferences", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
 
-        // Convert the list of Date objects to a set of strings
-        val timeStrings = prayerTimes.map { timeFormat.format(it) }.toSet()
+        // Convert the list of Pair<String, Date> to a set of formatted strings
+        val timeStrings = prayerTimes.map { (name, date) -> "$name:${timeFormat.format(date)}" }.toSet()
         editor.putStringSet("scheduledTimes", timeStrings)
         editor.apply()
 
@@ -277,9 +276,6 @@ private fun startForegroundService() {
         // Notify the ViewModel to reload prayer times
         val intent = Intent("PRAYER_TIMES_UPDATED")
         sendBroadcast(intent)
-        // Use LocalBroadcastManager to send the broadcast
-//        val intent = Intent("PRAYER_TIMES_UPDATED")
-//        LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
 
 
