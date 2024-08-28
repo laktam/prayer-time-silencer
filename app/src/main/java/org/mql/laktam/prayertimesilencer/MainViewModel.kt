@@ -12,24 +12,33 @@ import java.util.Date
 import java.util.Locale
 
 class MainViewModel : ViewModel() {
-    private val _prayerTimes = MutableStateFlow<List<Pair<String, String>>>(emptyList())
-    val prayerTimes: StateFlow<List<Pair<String, String>>> = _prayerTimes.asStateFlow()
+    private val _prayerTimes = MutableStateFlow<List<Triple<String, String, String>>>(emptyList())
+    val prayerTimes: StateFlow<List<Triple<String, String, String>>> = _prayerTimes.asStateFlow()
     val isServiceRunning: StateFlow<Boolean> = ServiceManager.isServiceRunning
 
     fun loadPrayerTimes(context: Context) {
         viewModelScope.launch {
-            val sharedPreferences = context.getSharedPreferences("PrayerTimesPreferences", Context.MODE_PRIVATE)
+            val sharedPreferences =
+                context.getSharedPreferences("PrayerTimesPreferences", Context.MODE_PRIVATE)
             val timeStrings = sharedPreferences.getStringSet("scheduledTimes", setOf()) ?: setOf()
 
             val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
             val silenceDuration = ServiceManager.silenceTime
 
+            // Map each string back to a Triple (name, start, end)
             val silenceTimes = timeStrings.map { timeString ->
-                val startTime = timeFormat.parse(timeString)
-                val endTime = Date(startTime.time + silenceDuration)
+                val parts = timeString.split(":")
+                if (parts.size == 3) {
+                    val name = parts[0]
+                    val startTimeString = "${parts[1]}:${parts[2]}"
+                    val startTime = timeFormat.parse(startTimeString)
+                    val endTime = Date(startTime.time + silenceDuration)
 
-                timeString to timeFormat.format(endTime)
-            }.sortedBy { it.first }
+                    Triple(name, startTimeString, timeFormat.format(endTime))
+                } else {
+                    Triple("Unknown", "00:00", "00:00")
+                }
+            }.sortedBy { it.second }
 
             _prayerTimes.value = silenceTimes
         }

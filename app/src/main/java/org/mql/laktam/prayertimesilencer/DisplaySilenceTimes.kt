@@ -1,5 +1,6 @@
 package org.mql.laktam.prayertimesilencer
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 
@@ -71,16 +73,16 @@ fun LoadingIndicator() {
 }
 
 @Composable
-fun PrayerTimesList(prayerTimes: List<Pair<String, String>>) {
+fun PrayerTimesList(prayerTimes: List<Triple<String, String, String>>) {
     LazyColumn {
-        items(prayerTimes) { (start, end) ->
-            PrayerTimeCard(start, end)
+        items(prayerTimes) { (name, start, end) ->
+            PrayerTimeCard(name, start, end)
         }
     }
 }
 
 @Composable
-fun PrayerTimeCard(start: String, end: String) {
+fun PrayerTimeCard(prayerName: String, start: String, end: String) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -90,28 +92,45 @@ fun PrayerTimeCard(start: String, end: String) {
     ) {
         Row(
             modifier = Modifier
-                .padding(16.dp)
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+//                .padding(16.dp)
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Column {
-                Text(
-                    text = "Start: $start",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(
-                    text = "End: $end",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-            Icon(
-                imageVector = Icons.Default.Info,
-                contentDescription = "Silence Time",
-                tint = MaterialTheme.colorScheme.primary
+            // Prayer name in larger font
+            Text(
+                text = prayerName,
+                style = MaterialTheme.typography.displaySmall,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(start = 16.dp)//padding(bottom = 8.dp)
             )
+
+            // Start and end times
+//            Row(
+//                modifier = Modifier.fillMaxWidth(),
+//                horizontalArrangement = Arrangement.SpaceBetween,
+//                verticalAlignment = Alignment.CenterVertically
+//            )
+            Box(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.background)
+//                    .background(Color(234,245,249,255))
+                    .padding(6.dp)  // Adjust padding as needed
+            ) {
+                Column {
+                    Text(
+                        text = "Start: $start",
+                        style = MaterialTheme.typography.titleLarge,  // Use titleLarge or another large style
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.padding(bottom = 4.dp)  // Adjust spacing between texts as needed
+                    )
+                    Text(
+                        text = "End: $end",
+                        style = MaterialTheme.typography.titleLarge,  // Use titleLarge or another large style
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            }
         }
     }
 }
