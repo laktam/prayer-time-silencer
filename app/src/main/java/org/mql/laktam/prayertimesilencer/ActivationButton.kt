@@ -25,19 +25,20 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 
 @Composable
-fun ActivationFab() {
+fun ActivationFab(viewModel: MainViewModel) {
     val context = LocalContext.current
 
     // State variables for permissions and service status
     var locationPermissionGranted by remember { mutableStateOf(false) }
     var doNotDisturbPermissionGranted by remember { mutableStateOf(false) }
-    var isServiceRunning by remember { mutableStateOf(ServiceManager.isServiceRunning(context)) }
+    val isServiceRunning by viewModel.isServiceRunning.collectAsState()
 
     // Permission checks and requests
     LaunchedEffect(Unit) {
@@ -73,10 +74,10 @@ fun ActivationFab() {
     val handleFabClick = {
         if (isServiceRunning) {
             stopService(context)
-            isServiceRunning = false
+            viewModel.setServiceRunning(context, false)
         } else {
             startService(context)
-            isServiceRunning = true
+            viewModel.setServiceRunning(context, true)
         }
     }
 
