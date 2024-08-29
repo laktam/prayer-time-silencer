@@ -92,7 +92,7 @@ fun ActivationFab(viewModel: MainViewModel) {
             )
             Text(
                 text = if (isServiceRunning) "Stop" else "Start",
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(start = 8.dp)
             )
         }

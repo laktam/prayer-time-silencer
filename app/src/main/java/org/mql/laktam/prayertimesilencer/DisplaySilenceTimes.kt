@@ -106,7 +106,8 @@ fun PrayerTimeCard(prayerName: String, start: String, end: String) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 0.dp),
+//            .padding(vertical = 0.dp),
+            .padding(top = 4.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
         shape = RectangleShape
