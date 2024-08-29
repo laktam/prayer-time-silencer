@@ -25,7 +25,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 
@@ -52,11 +57,11 @@ fun DisplaySilenceTimes(viewModel: MainViewModel) {
         }else if (prayerTimes.isEmpty()) {
             LoadingIndicator()
         } else {
-            Text(
-                text = "Scheduled Silence Times",
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
+//            Text(
+//                text = "Scheduled Silence Times",
+//                style = MaterialTheme.typography.titleLarge,
+//                modifier = Modifier.padding(bottom = 16.dp)
+//            )
             PrayerTimesList(prayerTimes)
         }
     }
@@ -83,12 +88,28 @@ fun PrayerTimesList(prayerTimes: List<Triple<String, String, String>>) {
 
 @Composable
 fun PrayerTimeCard(prayerName: String, start: String, end: String) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .drawBehind {
+                val cornerRadius = 8.dp.toPx() // Same as the card's corner radius
+                // Customize the shadow for the bottom only with rounded corners
+                drawRoundRect(
+                    color = Color.Black.copy(alpha = 0.1f), // Adjust color and opacity
+                    topLeft = Offset(0f, size.height), // Start at the bottom
+                    size = Size(size.width, 4.dp.toPx()), // Set the shadow size
+//                    cornerRadius = CornerRadius(cornerRadius) // Apply corner radius
+                )
+            }
+    ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+            .padding(vertical = 0.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        shape = RectangleShape
     ) {
         Row(
             modifier = Modifier
@@ -132,5 +153,6 @@ fun PrayerTimeCard(prayerName: String, start: String, end: String) {
                 }
             }
         }
+    }
     }
 }
