@@ -7,6 +7,7 @@ android {
     namespace 'org.mql.laktam.prayertimesilencer'
     compileSdk 34
 
+
     defaultConfig {
         applicationId "org.mql.laktam.prayertimesilencer"
         minSdk 24

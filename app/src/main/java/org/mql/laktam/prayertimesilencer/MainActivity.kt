@@ -119,15 +119,19 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen(viewModel: MainViewModel) {
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Scheduled Silence Times:") },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            )
-        },
+//        topBar = {
+//            TopAppBar(
+//                title = { Text(
+//                    text = "Scheduled Silence Times:",
+//                    style = MaterialTheme.typography.displaySmall,
+//                    modifier = Modifier.padding(top = 10.dp)
+//                ) },
+//                colors = TopAppBarDefaults.topAppBarColors(
+//                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+//                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+//                )
+//            )
+//        },
         floatingActionButton = {
             ActivationFab(viewModel)
         }
@@ -139,6 +143,12 @@ fun MainScreen(viewModel: MainViewModel) {
                 .padding(16.dp)
         ) {
 //            ActivationButton(modifier = Modifier.padding(bottom = 16.dp))
+            Text(
+                text = "Scheduled Silence Times:",
+                style = MaterialTheme.typography.displaySmall,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                modifier = Modifier.padding(top = 18.dp)
+            )
             DisplaySilenceTimes(viewModel)
         }
     }
