@@ -136,67 +136,38 @@ fun PrayerTimeCard(prayerName: String, start: String, end: String) {
 fun PrayerTimeCardContent(language:String, prayerName: String, start: String, end: String){
     val context = LocalContext.current
     val resourceId = getStringResourceByName(context, prayerName)
-
-    if(Locale.getDefault().language.equals("ar")){
-        Box(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.background)
+    // Prayer name in larger font
+    Text(
+        text = stringResource(resourceId),
+        style = MaterialTheme.typography.displaySmall,
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier.padding(start = 16.dp)//padding(bottom = 8.dp)
+    )
+    Box(
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
 //                    .background(Color(234,245,249,255))
-                .padding(6.dp)  // Adjust padding as needed
-        ) {
-            Column {
-                Text(
-                    text = stringResource(R.string.from) + start,
-                    style = MaterialTheme.typography.titleLarge,  // Use titleLarge or another large style
-                    color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.padding(bottom = 4.dp)  // Adjust spacing between texts as needed
-                )
-                Text(
-                    text = stringResource(R.string.from) + end,
-                    style = MaterialTheme.typography.titleLarge,  // Use titleLarge or another large style
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            }
-        }
-        // Prayer name in larger font
-        Text(
-            text = stringResource(resourceId),
-            style = MaterialTheme.typography.displaySmall,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(start = 16.dp)//padding(bottom = 8.dp)
-        )
-    }else{
-        // Prayer name in larger font
-        Text(
-            text = stringResource(resourceId),
-            style = MaterialTheme.typography.displaySmall,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(start = 16.dp)//padding(bottom = 8.dp)
-        )
-        Box(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.background)
-//                    .background(Color(234,245,249,255))
-                .padding(6.dp)  // Adjust padding as needed
-        ) {
-            Column {
-                Text(
-                    text = stringResource(R.string.from) + start,
-                    style = MaterialTheme.typography.titleLarge,  // Use titleLarge or another large style
-                    color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.padding(bottom = 4.dp)  // Adjust spacing between texts as needed
-                )
-                Text(
-                    text = stringResource(R.string.from) + end,
-                    style = MaterialTheme.typography.titleLarge,  // Use titleLarge or another large style
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            }
+            .padding(6.dp)  // Adjust padding as needed
+    ) {
+        Column {
+            Text(
+                text = stringResource(R.string.from) + start,
+                style = MaterialTheme.typography.titleLarge,  // Use titleLarge or another large style
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.padding(bottom = 4.dp)  // Adjust spacing between texts as needed
+            )
+            Text(
+                text = stringResource(R.string.to) + end,
+                style = MaterialTheme.typography.titleLarge,  // Use titleLarge or another large style
+                color = MaterialTheme.colorScheme.onBackground
+            )
         }
     }
+//    }
 
 }
 
 fun getStringResourceByName(context: Context, resourceName: String): Int {
     return context.resources.getIdentifier(resourceName, "string", context.packageName)
 }
+

@@ -46,6 +46,7 @@ import androidx.compose.ui.Alignment
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -73,17 +74,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             PrayerTimeSilencerTheme {
                 setAppLocale(this,"ar")
-//                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-//                    Column(
-//                        modifier = Modifier
-//                            .fillMaxSize()
-//                            .padding(innerPadding)
-//                            .padding(16.dp)
-//                    ) {
-//                        ActivationButton(modifier = Modifier.padding(bottom = 16.dp))
-//                        DisplaySilenceTimes(viewModel)
-//                    }
-//                }
                 MainScreen(viewModel = viewModel)
             }
         }
@@ -146,7 +136,7 @@ fun MainScreen(viewModel: MainViewModel) {
         ) {
 //            ActivationButton(modifier = Modifier.padding(bottom = 16.dp))
             Text(
-                text = "Scheduled Silence Times:",
+                text = stringResource(R.string.scheduled_silence_times) ,
                 style = MaterialTheme.typography.displaySmall,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier.padding(top = 18.dp)

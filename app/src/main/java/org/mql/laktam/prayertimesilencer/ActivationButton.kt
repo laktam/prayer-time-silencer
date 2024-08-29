@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
 
@@ -91,7 +92,7 @@ fun ActivationFab(viewModel: MainViewModel) {
                 contentDescription = if (isServiceRunning) "Stop" else "Start"
             )
             Text(
-                text = if (isServiceRunning) "Stop" else "Start",
+                text = if (isServiceRunning) stringResource(R.string.stop) else stringResource(R.string.start),
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(start = 8.dp)
             )
