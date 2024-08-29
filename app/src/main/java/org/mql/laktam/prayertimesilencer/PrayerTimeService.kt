@@ -210,7 +210,7 @@ class PrayerTimeService : Service() {
     private fun parseTime(timeString: String): Date {
     return try {
         // Parse the time string "HH:mm"
-        val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+        val timeFormat = SimpleDateFormat("HH:mm",Locale.ENGLISH )//Locale.getDefault()
         val parsedTime = timeFormat.parse(timeString)
 
         // Combine the parsed time with the current date
@@ -264,7 +264,8 @@ private fun startForegroundService() {
     private fun savePrayerTimes(prayerTimes: List<Pair<String, Date>>) {
         val sharedPreferences = getSharedPreferences("PrayerTimesPreferences", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
-        val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+        // use Locale.ENGLISH to not store numbers in arabic
+        val timeFormat = SimpleDateFormat("HH:mm", Locale.ENGLISH)//Locale.getDefault()
 
         // Convert the list of Pair<String, Date> to a set of formatted strings
         val timeStrings = prayerTimes.map { (name, date) -> "$name:${timeFormat.format(date)}" }.toSet()

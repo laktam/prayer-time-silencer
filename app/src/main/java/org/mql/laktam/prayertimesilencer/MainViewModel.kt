@@ -22,7 +22,7 @@ class MainViewModel : ViewModel() {
                 context.getSharedPreferences("PrayerTimesPreferences", Context.MODE_PRIVATE)
             val timeStrings = sharedPreferences.getStringSet("scheduledTimes", setOf()) ?: setOf()
 
-            val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+            val timeFormat = SimpleDateFormat("HH:mm",Locale.ENGLISH)//  Locale.getDefault()
             val silenceDuration = ServiceManager.silenceTime
 
             // Map each string back to a Triple (name, start, end)
