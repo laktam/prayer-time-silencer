@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -71,6 +72,7 @@ class MainActivity : ComponentActivity() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         setContent {
             PrayerTimeSilencerTheme {
+                setAppLocale(this,"ar")
 //                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 //                    Column(
 //                        modifier = Modifier
@@ -154,6 +156,15 @@ fun MainScreen(viewModel: MainViewModel) {
     }
 }
 
+fun setAppLocale(context: Context, languageCode: String) {
+    val locale = Locale(languageCode)
+    Locale.setDefault(locale)
+
+    val config = Configuration()
+    config.setLocale(locale)
+
+    context.resources.updateConfiguration(config, context.resources.displayMetrics)
+}
 
 @Preview(showBackground = true)
 @Composable
