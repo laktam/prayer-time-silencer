@@ -67,6 +67,8 @@ class PrayerTimeService : Service() {
             timer.cancel()
         }
         println("All alarms and timers cancelled.")
+        deletePrayerTimes()
+
     }
 
     private fun scheduleDailyPrayerTimes() {
@@ -238,7 +240,6 @@ class PrayerTimeService : Service() {
         Calendar.getInstance().time
     }
 
-
 }
 // Required for Android O and above to create a notification channel
 private fun createNotificationChannel() {
@@ -261,23 +262,40 @@ private fun startForegroundService() {
 
     startForeground(NOTIFICATION_ID, notification)
 }
-    private fun savePrayerTimes(prayerTimes: List<Pair<String, Date>>) {
+private fun savePrayerTimes(prayerTimes: List<Pair<String, Date>>) {
+    val sharedPreferences = getSharedPreferences("PrayerTimesPreferences", Context.MODE_PRIVATE)
+    val editor = sharedPreferences.edit()
+    // use Locale.ENGLISH to not store numbers in arabic
+    val timeFormat = SimpleDateFormat("HH:mm", Locale.ENGLISH)//Locale.getDefault()
+
+    // Convert the list of Pair<String, Date> to a set of formatted strings
+    val timeStrings = prayerTimes.map { (name, date) -> "$name:${timeFormat.format(date)}" }.toSet()
+    editor.putStringSet("scheduledTimes", timeStrings)
+    editor.apply()
+
+    println("Prayer times saved: $timeStrings")
+
+    // Notify the ViewModel to reload prayer times
+    // prayerTimesUpdateReceiver is in main activity
+    val intent = Intent("PRAYER_TIMES_UPDATED")
+    sendBroadcast(intent)
+}
+
+    private fun deletePrayerTimes() {
+        // Get the SharedPreferences instance
         val sharedPreferences = getSharedPreferences("PrayerTimesPreferences", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
-        // use Locale.ENGLISH to not store numbers in arabic
-        val timeFormat = SimpleDateFormat("HH:mm", Locale.ENGLISH)//Locale.getDefault()
 
-        // Convert the list of Pair<String, Date> to a set of formatted strings
-        val timeStrings = prayerTimes.map { (name, date) -> "$name:${timeFormat.format(date)}" }.toSet()
-        editor.putStringSet("scheduledTimes", timeStrings)
-        editor.apply()
+        // Remove the key that stores the prayer times
+        editor.remove("scheduledTimes")
+        editor.apply() // or editor.commit() if you want to ensure immediate saving
 
-        println("Prayer times saved: $timeStrings")
+        println("Prayer times deleted")
 
-        // Notify the ViewModel to reload prayer times
+        // Notify the ViewModel to reload or update the UI accordingly
+        // prayerTimesUpdateReceiver is in main activity
         val intent = Intent("PRAYER_TIMES_UPDATED")
         sendBroadcast(intent)
     }
-
 
 }
