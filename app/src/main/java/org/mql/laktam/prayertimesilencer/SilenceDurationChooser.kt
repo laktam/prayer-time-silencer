@@ -12,7 +12,7 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.ui.platform.LocalContext
 
 @Composable
-fun SilenceDurationChooser() {
+fun SilenceDurationChooser(viewModel: MainViewModel) {
     val context = LocalContext.current
 
     // List of numeric mute durations from 1 to 90 minutes
@@ -24,6 +24,7 @@ fun SilenceDurationChooser() {
     // State to manage the selected duration
     var selectedDuration by remember { mutableStateOf(durations[0]) }
 
+    val isServiceRunning by viewModel.isServiceRunning.collectAsState()
     // Box to wrap the TextField and DropdownMenu
     Box(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
         // TextField to show the selected item and toggle the dropdown menu
@@ -52,8 +53,10 @@ fun SilenceDurationChooser() {
                         selectedDuration = duration // Set the selected duration
                         ServiceManager.silenceTime = duration * 60 * 1000L
                         expanded = false // Close the dropdown
-                        stopService(context)
-                        startService(context)
+                        if(isServiceRunning){
+                            stopService(context)
+                            startService(context)
+                        }
                     }
                 )
             }
