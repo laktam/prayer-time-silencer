@@ -10,28 +10,33 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.times
+import org.mql.laktam.prayertimesilencer.ServiceManager.initSilenceTime
 
 @Composable
 fun SilenceDurationChooser(viewModel: MainViewModel) {
     val context = LocalContext.current
 
-    // List of numeric mute durations from 1 to 90 minutes
-    val durations = (1..90).toList() // Creates a list with numbers 1 to 90
+    // List of numeric mute durations from 2 to 90 minutes
+    val durations = (2..90).toList()
 
     // State to manage the expanded state of the dropdown menu
     var expanded by remember { mutableStateOf(false) }
-
+    // init time duration
+    initSilenceTime(context)
     // State to manage the selected duration
-    var selectedDuration by remember { mutableStateOf(durations[0]) }
+    var selectedDuration by remember { mutableStateOf(ServiceManager.silenceTime) }
 
     val isServiceRunning by viewModel.isServiceRunning.collectAsState()
+
     // Box to wrap the TextField and DropdownMenu
     Box(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
         // TextField to show the selected item and toggle the dropdown menu
         TextField(
-            value = "$selectedDuration minutes", // Display selected duration with unit
+            value = "$selectedDuration",
             onValueChange = {},
-            label = { Text("Select Mute Duration") },
+            label = { Text(stringResource(R.string.select_mute_duration)) },
             modifier = Modifier.fillMaxWidth(),
             readOnly = true,
             trailingIcon = {
@@ -41,19 +46,23 @@ fun SilenceDurationChooser(viewModel: MainViewModel) {
             }
         )
 
-        // Dropdown menu
+        // Dropdown menu with limited height to show only 6 items at a time
         DropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.heightIn(max = 6 * 48.dp) // Adjusting height to show 6 items
         ) {
             durations.forEach { duration ->
                 DropdownMenuItem(
-                    text = { Text("$duration minutes") }, // Show each duration with the unit
+                    text = { Text("$duration") },
                     onClick = {
-                        selectedDuration = duration // Set the selected duration
-                        ServiceManager.silenceTime = duration * 60 * 1000L
-                        expanded = false // Close the dropdown
-                        if(isServiceRunning){
+                        selectedDuration = duration
+//                        val silenceDurationInMillis = duration// * 60 * 1000L
+//                        ServiceManager.silenceTime = silenceDurationInMillis
+//                        ServiceManager.silenceTime = selectedDuration
+                        ServiceManager.saveSilenceTime(context, selectedDuration) // Save to SharedPreferences
+                        expanded = false
+                        if (isServiceRunning) {
                             stopService(context)
                             startService(context)
                         }
@@ -63,3 +72,56 @@ fun SilenceDurationChooser(viewModel: MainViewModel) {
         }
     }
 }
+
+//@Composable
+//fun SilenceDurationChooser(viewModel: MainViewModel) {
+//    val context = LocalContext.current
+//
+//    // List of numeric mute durations from 1 to 90 minutes
+//    val durations = (2..90).toList() // Creates a list with numbers 1 to 90
+//
+//    // State to manage the expanded state of the dropdown menu
+//    var expanded by remember { mutableStateOf(false) }
+//
+//    // State to manage the selected duration
+//    var selectedDuration by remember { mutableStateOf(durations[28]) }
+//
+//    val isServiceRunning by viewModel.isServiceRunning.collectAsState()
+//    // Box to wrap the TextField and DropdownMenu
+//    Box(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+//        // TextField to show the selected item and toggle the dropdown menu
+//        TextField(
+//            value = "$selectedDuration", // Display selected duration with unit
+//            onValueChange = {},
+//            label = { Text(stringResource(R.string.select_mute_duration)) },
+//            modifier = Modifier.fillMaxWidth(),
+//            readOnly = true,
+//            trailingIcon = {
+//                IconButton(onClick = { expanded = true }) {
+//                    Icon(Icons.Default.ArrowDropDown, contentDescription = "Expand")
+//                }
+//            }
+//        )
+//
+//        // Dropdown menu
+//        DropdownMenu(
+//            expanded = expanded,
+//            onDismissRequest = { expanded = false }
+//        ) {
+//            durations.forEach { duration ->
+//                DropdownMenuItem(
+//                    text = { Text("$duration") }, // Show each duration with the unit
+//                    onClick = {
+//                        selectedDuration = duration // Set the selected duration
+//                        ServiceManager.silenceTime = duration * 60 * 1000L
+//                        expanded = false // Close the dropdown
+//                        if(isServiceRunning){
+//                            stopService(context)
+//                            startService(context)
+//                        }
+//                    }
+//                )
+//            }
+//        }
+//    }
+//}
