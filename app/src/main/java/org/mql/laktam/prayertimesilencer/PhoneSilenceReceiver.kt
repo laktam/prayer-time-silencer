@@ -26,7 +26,7 @@ class PhoneSilenceReceiver : BroadcastReceiver() {
             println("Phone silenced by AlarmManager")
 
             // Schedule another alarm to restore the ringer mode
-            scheduleRingerRestore(context, originalRingerMode, ServiceManager.silenceTime)
+            scheduleRingerRestore(context, originalRingerMode, ServiceManager.silenceTime * 60 * 1000L)
         }
     }
 

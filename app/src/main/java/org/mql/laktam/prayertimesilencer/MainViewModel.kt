@@ -23,7 +23,7 @@ class MainViewModel : ViewModel() {
             val timeStrings = sharedPreferences.getStringSet("scheduledTimes", setOf()) ?: setOf()
 
             val timeFormat = SimpleDateFormat("HH:mm",Locale.ENGLISH)//  Locale.getDefault()
-            val silenceDuration = ServiceManager.silenceTime
+            val silenceDuration = ServiceManager.silenceTime *  60 * 1000L
 
             // Map each string back to a Triple (name, start, end)
             val silenceTimes = timeStrings.map { timeString ->

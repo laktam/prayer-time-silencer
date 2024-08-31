@@ -161,7 +161,7 @@ class PrayerTimeService : Service() {
         pendingIntents.add(pendingIntent)
 
         println("Start delay: $startDelay")
-        val endDelay = ServiceManager.silenceTime
+        val endDelay = ServiceManager.silenceTime * 60 * 1000L
 
         if (startDelay > 0) {
             try {
