@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Prayer Time Silencer</string>
     <string name="scheduled_silence_times">مواعيد كتم صوت الهاتف المجدولة:</string>
-    <string name="stoped_service_note">اضغط على زر البدء لتحديد أوقات الصلاة ووضع الهاتف تلقائيًا في وضع كتم الصوت أثناء أوقات الصلاة</string>
+    <string name="stoped_service_note">اضغط على زر البدء لتحديد أوقات الصلاة تلقائيًا ووضع الهاتف  في وضع كتم الصوت أثناء أوقات الصلاة</string>
     <string name="Fajr">الفجر</string>
     <string name="Dhuhr">الظهر</string>
     <string name="Asr">العصر</string>
