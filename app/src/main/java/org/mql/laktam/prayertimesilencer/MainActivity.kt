@@ -110,6 +110,7 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(viewModel: MainViewModel) {
+    val isServiceRunning by viewModel.isServiceRunning.collectAsState()
     Scaffold(
 //        topBar = {
 //            TopAppBar(
@@ -135,12 +136,14 @@ fun MainScreen(viewModel: MainViewModel) {
                 .padding(16.dp)
         ) {
 //            ActivationButton(modifier = Modifier.padding(bottom = 16.dp))
-            Text(
-                text = stringResource(R.string.scheduled_silence_times) ,
-                style = MaterialTheme.typography.displaySmall,
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                modifier = Modifier.padding(top = 18.dp)
-            )
+
+                Text(
+                    text = if(isServiceRunning) stringResource(R.string.scheduled_silence_times) else "",
+                    style = MaterialTheme.typography.displaySmall,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier.padding(top = 18.dp)
+                )
+
             DisplaySilenceTimes(viewModel)
             SilenceDurationChooser(viewModel)
         }
