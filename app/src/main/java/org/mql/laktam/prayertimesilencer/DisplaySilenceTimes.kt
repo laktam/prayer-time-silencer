@@ -76,12 +76,15 @@ fun LoadingIndicator() {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        CircularProgressIndicator()
-        Text(
-            text = stringResource(R.string.searching_for_prayer_times),
-            style = MaterialTheme.typography.titleLarge,
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            CircularProgressIndicator()
+            Text(
+                text = stringResource(R.string.searching_for_prayer_times),
+                style = MaterialTheme.typography.titleLarge,
 //            modifier = Modifier.padding(start = 16.dp)//padding(bottom = 8.dp)
-        )
+            )
+        }
+
     }
 }
 

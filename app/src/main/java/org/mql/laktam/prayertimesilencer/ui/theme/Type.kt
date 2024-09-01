@@ -19,9 +19,9 @@ val sparkyStones = FontFamily(
 
 val Typography = Typography(
     bodyLarge = TextStyle(
-        fontFamily = FontFamily.Cursive,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
+        fontFamily = airstrip,
+        fontWeight = FontWeight.Medium,
+        fontSize = 24.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
     ),
