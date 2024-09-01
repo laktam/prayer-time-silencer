@@ -25,24 +25,24 @@ val Typography = Typography(
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
     ),
-displaySmall = TextStyle(
+displaySmall = TextStyle(// scheduled_silence_times, prayer name, start and stop button
     fontFamily = airstrip,
-    fontWeight = FontWeight.Normal,
+    fontWeight = FontWeight.Bold,
     fontSize = 28.sp,
     lineHeight = 24.sp,
     letterSpacing = 0.5.sp
 ),
-    titleLarge = TextStyle(
+    titleLarge = TextStyle(// from, to,
         fontFamily = airstrip,
         fontWeight = FontWeight.Normal,
         fontSize = 18.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
     ),
-    titleMedium = TextStyle(
+    titleMedium = TextStyle(//for note if service is off
         fontFamily = airstrip,
         fontWeight = FontWeight.Normal,
-        fontSize = 18.sp,
+        fontSize = 22.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
     ),

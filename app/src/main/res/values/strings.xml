@@ -12,5 +12,5 @@
     <string name="from">From</string>
     <string name="to">To</string>
     <string name="select_mute_duration">Select mute duration (minutes):</string>
-<!--    <string name="minutes">minutes</string>-->
+    <string name="searching_for_prayer_times">searching for prayer times</string>
 </resources>

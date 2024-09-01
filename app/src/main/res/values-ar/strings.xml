@@ -12,6 +12,6 @@
     <string name="from">من</string>
     <string name="to">إلى</string>
     <string name="select_mute_duration">مدة كتم الصوت (بالدقائق)</string>
-<!--    <string name="minutes">دقائق</string>-->
+    <string name="searching_for_prayer_times">جاري البحث عن مواقيت الصلاة</string>
 
 </resources>
