@@ -159,13 +159,13 @@ fun PrayerTimeCardContent(language:String, prayerName: String, start: String, en
     ) {
         Column {
             Text(
-                text = stringResource(R.string.from) + start,
+                text = stringResource(R.string.from) +" $start" ,
                 style = MaterialTheme.typography.titleLarge,  // Use titleLarge or another large style
                 color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.padding(bottom = 4.dp)  // Adjust spacing between texts as needed
             )
             Text(
-                text = stringResource(R.string.to) + end,
+                text = stringResource(R.string.to) + " $end",
                 style = MaterialTheme.typography.titleLarge,  // Use titleLarge or another large style
                 color = MaterialTheme.colorScheme.onBackground
             )
