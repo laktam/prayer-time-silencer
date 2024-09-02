@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.times
@@ -70,9 +71,10 @@ fun SilenceDurationChooser(viewModel: MainViewModel) {
                     DropdownMenuItem(
                         modifier = Modifier.fillMaxWidth(),
                         text = {
-                            Text(text ="$duration",
-                            style = MaterialTheme.typography.titleLarge,
-                                    modifier = Modifier.fillMaxWidth(),
+                            Text(
+                                text = "$duration",
+                                style = MaterialTheme.typography.titleLarge,
+                                modifier = Modifier.fillMaxWidth(),
                             )
 
                         },
@@ -90,6 +92,7 @@ fun SilenceDurationChooser(viewModel: MainViewModel) {
             }
         }
     }
+
 }
 //@Composable
 //fun SilenceDurationChooser(viewModel: MainViewModel) {
