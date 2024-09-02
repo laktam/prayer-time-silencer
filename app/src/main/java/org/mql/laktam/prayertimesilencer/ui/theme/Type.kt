@@ -13,36 +13,43 @@ val airstrip = FontFamily(
     Font(R.font.airstrip),
 )
 
+val HarmattanFontFamily = FontFamily(
+    Font(R.font.harmattan_regular, FontWeight.Normal),
+    Font(R.font.harmattan_bold, FontWeight.Bold),
+    Font(R.font.harmattan_medium, FontWeight.Medium),
+    Font(R.font.harmattan_semibold, FontWeight.SemiBold)
+)
+
 val sparkyStones = FontFamily(
     Font(R.font.sparkystones),
 )
 
 val Typography = Typography(
-    bodyLarge = TextStyle(
-        fontFamily = airstrip,
+    bodyLarge = TextStyle(//start and stop button
+        fontFamily = HarmattanFontFamily,
         fontWeight = FontWeight.Medium,
         fontSize = 24.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
     ),
-displaySmall = TextStyle(// scheduled_silence_times, prayer name, start and stop button
-    fontFamily = airstrip,
+displaySmall = TextStyle(// scheduled_silence_times, prayer name,
+    fontFamily = HarmattanFontFamily,
     fontWeight = FontWeight.Bold,
-    fontSize = 28.sp,
+    fontSize = 30.sp,
     lineHeight = 24.sp,
     letterSpacing = 0.5.sp
 ),
     titleLarge = TextStyle(// from, to,
-        fontFamily = airstrip,
-        fontWeight = FontWeight.Normal,
-        fontSize = 18.sp,
+        fontFamily = HarmattanFontFamily,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 24.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
     ),
     titleMedium = TextStyle(//for note if service is off
-        fontFamily = airstrip,
+        fontFamily = HarmattanFontFamily,
         fontWeight = FontWeight.Normal,
-        fontSize = 22.sp,
+        fontSize = 28.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
     ),

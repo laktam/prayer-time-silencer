@@ -41,7 +41,7 @@ fun SilenceDurationChooser(viewModel: MainViewModel) {
         Text(
             text = stringResource(R.string.select_mute_duration),
             style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(bottom = 8.dp)
+//            modifier = Modifier.padding(bottom = 0.dp)
         )
 
         // Dropdown
@@ -51,7 +51,7 @@ fun SilenceDurationChooser(viewModel: MainViewModel) {
                     .fillMaxWidth()
                     .clickable { expanded = true }
                     .border(1.dp, Color.Gray, RoundedCornerShape(4.dp))
-                    .padding(16.dp),
+                    .padding(8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {

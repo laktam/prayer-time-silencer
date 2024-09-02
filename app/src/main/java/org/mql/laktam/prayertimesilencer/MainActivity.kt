@@ -27,6 +27,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Card
@@ -119,6 +121,8 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(viewModel: MainViewModel) {
+    val scrollState = rememberScrollState()
+    val prayerTimes by viewModel.prayerTimes.collectAsState()
     val isServiceRunning by viewModel.isServiceRunning.collectAsState()
     Scaffold(
 //        topBar = {
@@ -152,6 +156,7 @@ fun MainScreen(viewModel: MainViewModel) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
+//                    .verticalScroll(scrollState)
                     .padding(innerPadding)
                     .padding(16.dp)
             ) {
@@ -165,7 +170,9 @@ fun MainScreen(viewModel: MainViewModel) {
                 )
 
                 DisplaySilenceTimes(viewModel)
-                SilenceDurationChooser(viewModel)
+                if(!isServiceRunning){
+                    SilenceDurationChooser(viewModel)
+                }
             }
         }
     }

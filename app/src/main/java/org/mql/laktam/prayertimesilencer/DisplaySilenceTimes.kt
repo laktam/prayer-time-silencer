@@ -66,6 +66,9 @@ fun DisplaySilenceTimes(viewModel: MainViewModel) {
 //                modifier = Modifier.padding(bottom = 16.dp)
 //            )
             PrayerTimesList(prayerTimes)
+//            prayerTimes.forEach { (name, start, end) ->
+//                PrayerTimeCard(name, start, end)
+//            }
         }
     }
 }
@@ -154,21 +157,20 @@ fun PrayerTimeCardContent(language:String, prayerName: String, start: String, en
     Box(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
-//                    .background(Color(234,245,249,255))
-            .padding(6.dp)  // Adjust padding as needed
+//            .padding(6.dp)  // Adjust padding as needed
     ) {
         Column {
             Text(
-                text = stringResource(R.string.from) +" $start" ,
+                text = stringResource(R.string.from) +" $start\n" + stringResource(R.string.to) + " $end",
                 style = MaterialTheme.typography.titleLarge,  // Use titleLarge or another large style
                 color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.padding(bottom = 4.dp)  // Adjust spacing between texts as needed
+//                modifier = Modifier.padding(bottom = 4.dp)  // Adjust spacing between texts as needed
             )
-            Text(
-                text = stringResource(R.string.to) + " $end",
-                style = MaterialTheme.typography.titleLarge,  // Use titleLarge or another large style
-                color = MaterialTheme.colorScheme.onBackground
-            )
+//            Text(
+//                text = stringResource(R.string.to) + " $end",
+//                style = MaterialTheme.typography.titleLarge,  // Use titleLarge or another large style
+//                color = MaterialTheme.colorScheme.onBackground
+//            )
         }
     }
 //    }
