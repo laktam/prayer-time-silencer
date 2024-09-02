@@ -13,4 +13,8 @@
     <string name="to">To</string>
     <string name="select_mute_duration">Select mute duration (minutes):</string>
     <string name="searching_for_prayer_times">searching for prayer times</string>
+    <string name="select_language">language</string>
+    <string name="language_english">English</string>
+    <string name="language_arabic">Arabic</string>
+
 </resources>
