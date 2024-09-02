@@ -13,9 +13,15 @@
 - **User Interface:** Displays prayer names, start and end times, and provides control to start or stop the silencing service.
 
 ## Screenshots
-
-![App Interface](screenshot.png)
-
+<div>
+<img src="screenshots/1en.jpg" width="24%">
+<img src="screenshots/2en.jpg" width="24%">
+<img src="screenshots/3en.jpg" width="24%">
+<img src="screenshots/4en.jpg" width="24%">
+<img src="screenshots/1ar.jpg" width="24%">
+<img src="screenshots/2ar.jpg" width="24%">
+<img src="screenshots/3ar.jpg" width="24%">
+    </div>
 ## Installation
 
 To install and run the **Prayer Time Silencer** app on your local machine, follow these steps:
