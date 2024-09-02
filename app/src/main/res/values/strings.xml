@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Prayer Time Silencer</string>
+    <string name="service_note">Silencing your phone during prayer times.</string>
     <string name="scheduled_silence_times">Scheduled phone mute times:</string>
     <string name="stoped_service_note">Click start to fetch prayer times and automatically schedule phone silence</string>
     <string name="Fajr">Fajr</string>
@@ -12,7 +13,7 @@
     <string name="from">From</string>
     <string name="to">To</string>
     <string name="select_mute_duration">Select mute duration (minutes):</string>
-    <string name="searching_for_prayer_times">searching for prayer times</string>
+    <string name="searching_for_prayer_times">searching for prayer times (this step need internet connection)</string>
     <string name="select_language">language</string>
     <string name="language_english">English</string>
     <string name="language_arabic">Arabic</string>

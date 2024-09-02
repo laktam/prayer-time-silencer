@@ -256,8 +256,9 @@ private fun createNotificationChannel() {
 private fun startForegroundService() {
     val notification = NotificationCompat.Builder(this, CHANNEL_ID)
         .setContentTitle("Prayer Time Service")
-        .setContentText("Silencing your phone during prayer times.")
-        .setSmallIcon(R.drawable.ic_notification)
+        .setContentText(getString(R.string.service_note))
+        .setSmallIcon(android.R.drawable.ic_menu_info_details
+        )
         .build()
 
     startForeground(NOTIFICATION_ID, notification)
