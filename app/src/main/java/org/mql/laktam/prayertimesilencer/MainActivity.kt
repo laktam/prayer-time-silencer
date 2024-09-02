@@ -92,29 +92,11 @@ class MainActivity : ComponentActivity() {
         registerReceiver(prayerTimesUpdateReceiver, IntentFilter("PRAYER_TIMES_UPDATED"))
 
 
-        // Register the receiver using LocalBroadcastManager
-//        LocalBroadcastManager.getInstance(this).registerReceiver(
-//            prayerTimesUpdateReceiver,
-//            IntentFilter("PRAYER_TIMES_UPDATED")
-//        )
-
-// Register the receiver with the appropriate flag
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-//            registerReceiver(
-//                prayerTimesUpdateReceiver,
-//                IntentFilter("PRAYER_TIMES_UPDATED"),
-//                RECEIVER_NOT_EXPORTED
-//            )
-//        } else {
-//            registerReceiver(prayerTimesUpdateReceiver, IntentFilter("PRAYER_TIMES_UPDATED"))
-//        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(prayerTimesUpdateReceiver)
-//        LocalBroadcastManager.getInstance(this).unregisterReceiver(prayerTimesUpdateReceiver)
-
     }
 }
 
@@ -125,19 +107,7 @@ fun MainScreen(viewModel: MainViewModel) {
     val prayerTimes by viewModel.prayerTimes.collectAsState()
     val isServiceRunning by viewModel.isServiceRunning.collectAsState()
     Scaffold(
-//        topBar = {
-//            TopAppBar(
-//                title = { Text(
-//                    text = "Scheduled Silence Times:",
-//                    style = MaterialTheme.typography.displaySmall,
-//                    modifier = Modifier.padding(top = 10.dp)
-//                ) },
-//                colors = TopAppBarDefaults.topAppBarColors(
-//                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-//                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-//                )
-//            )
-//        },
+
         floatingActionButton = {
             ActivationFab(viewModel)
         }
@@ -156,11 +126,9 @@ fun MainScreen(viewModel: MainViewModel) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-//                    .verticalScroll(scrollState)
                     .padding(innerPadding)
                     .padding(16.dp)
             ) {
-//            ActivationButton(modifier = Modifier.padding(bottom = 16.dp))
 
                 Text(
                     text = if (isServiceRunning) stringResource(R.string.scheduled_silence_times) else "",
@@ -186,13 +154,4 @@ fun setAppLocale(context: Context, languageCode: String) {
     config.setLocale(locale)
 
     context.resources.updateConfiguration(config, context.resources.displayMetrics)
-}
-
-@Preview(showBackground = true)
-@Composable
-fun MainScreenPreview() {
-    val mockViewModel = MainViewModel() // Assuming this can be instantiated without parameters
-    PrayerTimeSilencerTheme {
-        MainScreen(viewModel = mockViewModel)
-    }
 }

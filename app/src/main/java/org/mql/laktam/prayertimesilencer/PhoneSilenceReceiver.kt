@@ -39,7 +39,7 @@ class PhoneSilenceReceiver : BroadcastReceiver() {
 
         val pendingIntent = PendingIntent.getBroadcast(context,0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-//        val triggerAtMillis = System.currentTimeMillis() + delayMillis
+
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 if (alarmManager.canScheduleExactAlarms()) {

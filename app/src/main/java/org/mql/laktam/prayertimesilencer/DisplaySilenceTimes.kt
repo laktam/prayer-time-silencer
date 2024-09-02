@@ -60,15 +60,8 @@ fun DisplaySilenceTimes(viewModel: MainViewModel) {
         }else if (prayerTimes.isEmpty()) {
             LoadingIndicator()
         } else {
-//            Text(
-//                text = "Scheduled Silence Times",
-//                style = MaterialTheme.typography.titleLarge,
-//                modifier = Modifier.padding(bottom = 16.dp)
-//            )
+
             PrayerTimesList(prayerTimes)
-//            prayerTimes.forEach { (name, start, end) ->
-//                PrayerTimeCard(name, start, end)
-//            }
         }
     }
 }
@@ -84,7 +77,6 @@ fun LoadingIndicator() {
             Text(
                 text = stringResource(R.string.searching_for_prayer_times),
                 style = MaterialTheme.typography.titleLarge,
-//            modifier = Modifier.padding(start = 16.dp)//padding(bottom = 8.dp)
             )
         }
 
@@ -108,13 +100,11 @@ fun PrayerTimeCard(prayerName: String, start: String, end: String) {
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .drawBehind {
-                val cornerRadius = 8.dp.toPx() // Same as the card's corner radius
                 // Customize the shadow for the bottom only with rounded corners
                 drawRoundRect(
                     color = Color.Black.copy(alpha = 0.1f), // Adjust color and opacity
                     topLeft = Offset(0f, size.height), // Start at the bottom
                     size = Size(size.width, 4.dp.toPx()), // Set the shadow size
-//                    cornerRadius = CornerRadius(cornerRadius) // Apply corner radius
                 )
             }
     ) {
@@ -130,7 +120,6 @@ fun PrayerTimeCard(prayerName: String, start: String, end: String) {
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
-//                .padding(16.dp)
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
 
@@ -164,16 +153,10 @@ fun PrayerTimeCardContent(language:String, prayerName: String, start: String, en
                 text = stringResource(R.string.from) +" $start\n" + stringResource(R.string.to) + " $end",
                 style = MaterialTheme.typography.titleLarge,  // Use titleLarge or another large style
                 color = MaterialTheme.colorScheme.onBackground,
-//                modifier = Modifier.padding(bottom = 4.dp)  // Adjust spacing between texts as needed
             )
-//            Text(
-//                text = stringResource(R.string.to) + " $end",
-//                style = MaterialTheme.typography.titleLarge,  // Use titleLarge or another large style
-//                color = MaterialTheme.colorScheme.onBackground
-//            )
+
         }
     }
-//    }
 
 }
 
