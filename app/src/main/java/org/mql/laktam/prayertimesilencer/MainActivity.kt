@@ -80,7 +80,7 @@ class MainActivity : ComponentActivity() {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setAppLocale(this, "ar")
+        setAppLocale(this, "en")
         enableEdgeToEdge()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         setContent {
