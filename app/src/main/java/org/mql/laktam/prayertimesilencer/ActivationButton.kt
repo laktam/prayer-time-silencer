@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -31,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 
 
 @Composable
@@ -41,7 +43,9 @@ fun ActivationFab(viewModel: MainViewModel) {
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
 //
-    val locationPermissionsState = remember { mutableStateOf(false) }
+    val locationPermissionsState = remember { mutableStateOf(ActivityCompat.checkSelfPermission(
+                context, Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED) }
     val isServiceRunning by viewModel.isServiceRunning.collectAsState()
     val doNotDisturbPermissionGranted = remember { mutableStateOf(notificationManager.isNotificationPolicyAccessGranted()) }
 
