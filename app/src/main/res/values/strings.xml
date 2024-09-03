@@ -18,4 +18,7 @@
     <string name="language_english">English</string>
     <string name="language_arabic">Arabic</string>
     <string name="permissions_note">The app need location and do not disturb permissions</string>
+    <string name="give_permisssions_button">Give Permissions</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="permissions_dialog_title">Permissions Required</string>
 </resources>

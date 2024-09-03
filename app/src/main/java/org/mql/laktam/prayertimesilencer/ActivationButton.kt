@@ -97,8 +97,8 @@ fun ActivationFab(viewModel: MainViewModel) {
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
-            title = { Text("Permissions Required") },
-            text = { Text("This app needs location permissions to provide location-based services. Please grant the permissions to continue.") },
+            title = { Text(stringResource(R.string.permissions_dialog_title)) },
+            text = { Text(stringResource(R.string.permissions_note)) },
             confirmButton = {
                 Button(
                     onClick = {
@@ -117,21 +117,21 @@ fun ActivationFab(viewModel: MainViewModel) {
                         showDialog = false
                     }
                 ) {
-                    Text("Request Permissions")
+                    Text(stringResource(R.string.give_permisssions_button))
                 }
             },
             dismissButton = {
                 Button(
-                    onClick = { showDialog = false }
+                    onClick = { showDialog = false },
+                    modifier = Modifier.padding(horizontal = 8.dp)
                 ) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel_button))
                 }
             }
         )
     }
 
     FloatingActionButton(onClick = {
-//        handleFabClick()
         handleFabClick()
     }) {
         Row(

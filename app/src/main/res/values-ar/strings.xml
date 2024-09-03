@@ -19,4 +19,7 @@
     <string name="language_english">إنجليزي</string> <!-- "English" in Arabic -->
     <string name="language_arabic">عربي</string> <!-- "Arabic" in Arabic -->
     <string name="permissions_note">يحتاج التطبيق إلى صلاحيات تحديد الموقع وتغيير وضع الهاتف</string>
+    <string name="give_permisssions_button">اعطاء صلاحيات</string>
+    <string name="cancel_button">إلغاء</string>
+    <string name="permissions_dialog_title">صلاحيات مطلوبة</string>
 </resources>
