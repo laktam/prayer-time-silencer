@@ -53,7 +53,7 @@ fun DisplaySilenceTimes(viewModel: MainViewModel) {
     Column(modifier = Modifier.fillMaxWidth()) {
         if (!isServiceRunning) {
             Text(
-                text = stringResource(R.string.stoped_service_note),
+                text = stringResource(R.string.stopped_service_note),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(bottom = 16.dp)
             )

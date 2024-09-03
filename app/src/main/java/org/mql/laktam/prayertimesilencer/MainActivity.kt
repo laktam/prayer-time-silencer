@@ -53,6 +53,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -79,7 +80,7 @@ class MainActivity : ComponentActivity() {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setAppLocale(this, "en")
+        setAppLocale(this, "ar")
         enableEdgeToEdge()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         setContent {
@@ -140,6 +141,21 @@ fun MainScreen(viewModel: MainViewModel) {
                 DisplaySilenceTimes(viewModel)
                 if(!isServiceRunning){
                     SilenceDurationChooser(viewModel)
+//                    Card(
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .padding(top = 20.dp),
+//
+//                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+//                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+//                        shape = RectangleShape
+//                    ) {
+//                        Text(
+//                            text = stringResource(R.string.permissions_note),
+//                            style = MaterialTheme.typography.titleMedium,
+//                            modifier = Modifier.padding(vertical = 3.dp)
+//                        )
+//                    }
                 }
             }
         }

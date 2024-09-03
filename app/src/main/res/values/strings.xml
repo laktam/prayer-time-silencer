@@ -2,7 +2,7 @@
     <string name="app_name">Prayer Time Silencer</string>
     <string name="service_note">Silencing your phone during prayer times.</string>
     <string name="scheduled_silence_times">Scheduled phone mute times:</string>
-    <string name="stoped_service_note">Click start to fetch prayer times and automatically schedule phone silence</string>
+    <string name="stopped_service_note">Click start to fetch prayer times and automatically schedule phone silence</string>
     <string name="Fajr">Fajr</string>
     <string name="Dhuhr">Dhuhr</string>
     <string name="Asr">Asr</string>
@@ -17,5 +17,5 @@
     <string name="select_language">language</string>
     <string name="language_english">English</string>
     <string name="language_arabic">Arabic</string>
-
+    <string name="permissions_note">The app need location and do not disturb permissions</string>
 </resources>
