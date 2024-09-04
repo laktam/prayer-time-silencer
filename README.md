@@ -19,11 +19,13 @@
 <img src="screenshots/2en.jpg" width="24%">
 <img src="screenshots/3en.jpg" width="24%">
 <img src="screenshots/4en.jpg" width="24%">
+</div>
+<div>
 <img src="screenshots/1ar.jpg" width="24%">
 <img src="screenshots/1.5ar.jpg" width="24%">
 <img src="screenshots/2ar.jpg" width="24%">
 <img src="screenshots/3ar.jpg" width="24%">
-    </div>
+</div>
 ## Installation
 
 To install and run the **Prayer Time Silencer** app on your local machine, follow these steps:
