@@ -1,13 +1,13 @@
 # Prayer Time Silencer
 
-**Prayer Time Silencer** is an Android application designed to help users maintain focus during Islamic prayer times by automatically managing the phone's silence mode. The app uses the device's location to fetch daily prayer times and silences the phone during these times for a specified duration.
+**Prayer Time Silencer** is an Android application designed to help users maintain focus during Islamic prayer times by automatically managing the phone's silence mode. The app uses the device's location to fetch daily prayer times and silences the phone during these times for a specified duration (the app only need internet connection one time a day to fetch prayer times).
 
 ## Features
 
 - **Automatic Silence Mode:** Silences the phone during each prayer time (Fajr, Dhuhr, Asr, Maghrib, Isha) and restores the normal mode afterward.
 - **Location-Based Prayer Times:** Fetches accurate prayer times based on the user's current location.
 - **Foreground Service:** Runs as a foreground service to ensure it continues functioning even when closed.
-- **Network Monitoring:** Monitors the network connection to ensure prayer times are fetched as soon as the internet is available.
+- **Network Monitoring:** Monitors the network connection to ensure prayer times are fetched as soon as the internet is available (the app only need internet connection one time a day to fetch prayer times).
 - **Custom Silence Duration:** Allows users to specify the duration for which the phone should remain silent during each prayer time.
 - **Persistent Storage:** Stores prayer times and user preferences, ensuring functionality even after a device restart.
 - **User Interface:** Displays prayer names, start and end times, and provides control to start or stop the silencing service.
