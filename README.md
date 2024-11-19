@@ -66,6 +66,12 @@ To install and run the **Prayer Time Silencer** app on your local machine, follo
 - **Foreground Service:** To ensure continuous background operation.
 - **SharedPreferences:** For storing user preferences and fetched prayer times.
 
-## Acknowledgements
+## Todo 
+- Get prayer times for a month or even a year instead of getting times for only one day to work offline
+- Add update button in case of location change
+- Fix app not working for somme devices
+- Replace the use of forground service
+
+## Prayer Times API used
 
 - [IslamicFinder API](https://aladhan.com/prayer-times-api)
